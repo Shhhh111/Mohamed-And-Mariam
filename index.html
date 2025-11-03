@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💕 محادثة رومانسية - محمد ومريم 💕</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💕</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    html {
+      height: 100vh;
+    }
+    .message-left {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 18px 18px 18px 4px;
+      margin-left: 0;
+      margin-right: auto;
+    }
+    .message-right {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 18px 18px 4px 18px;
+      margin-right: 0;
+      margin-left: auto;
+    }
+    .chat-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: white;
+    }
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .avatar:hover {
+      transform: scale(1.1);
+    }
+    .input-area {
+      border-top: 2px solid #e5e7eb;
+      padding: 16px;
+      background: white;
+    }
+    .login-container {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .emoji-picker {
+      position: absolute;
+      bottom: 70px;
+      right: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      max-width: 280px;
+      flex-wrap: wrap;
+      gap: 8px;
+      z-index: 1000;
+    }
+    .emoji-picker.show {
+      display: flex;
+    }
+    .emoji-btn {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .emoji-btn:hover {
+      background: #f3f4f6;
+    }
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      z-index: 1001;
+      animation: slideDown 0.3s ease;
+    }
+    .notification.success {
+      background: #10b981;
+    }
+    .notification.error {
+      background: #ef4444;
+    }
+    @keyframes slideDown {
+      from { transform: translateX(-50%) translateY(-100%); }
+      to { transform: translateX(-50%) translateY(0); }
+    }
+    .online-indicator {
+      width: 12px;
+      height: 12px;
+      background: #10b981;
+      border-radius: 50%;
+      border: 2px solid white;
+      animation: pulse 2s infinite;
+    }
+    .offline-indicator {
+      width: 12px;
+      height: 12px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .message-actions {
+      display: flex;
+      margin-top: 8px;
+      gap: 4px;
+      justify-content: center;
+    }
+    .typing-indicator {
+      background: #f3f4f6;
+      border-radius: 18px;
+      padding: 12px 16px;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 200px;
+    }
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background: #9ca3af;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out;
+    }
+    .chat-sidebar {
+      width: 300px;
+      background: white;
+      border-right: 2px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .group-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: between;
+    }
+    .group-item:hover {
+      background: #f9fafb;
+    }
+    .group-item.active {
+      background: #e0e7ff;
+      border-right: 4px solid #667eea;
+    }
+    .chat-layout {
+      display: flex;
+      height: 100vh;
+    }
+    @media (max-width: 768px) {
+      .avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+      .messages-area {
+        padding: 12px;
+      }
+      .modal-content {
+        margin: 20px;
+        padding: 16px;
+      }
+      .chat-sidebar {
+        width: 250px;
+      }
+      .chat-layout.mobile-hide-sidebar .chat-sidebar {
+        display: none;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div id="app"></div>
+  <script>
+    // إعدادات jsonbin.io
+    const JSONBIN_BIN_ID = '6908d51eae596e708f41ee87';
+    const JSONBIN_API_KEY = '$2a$10$hJudGjs2DM9GszivDobyS.5YXXS8HRiPobc9XxhYDUM5dtZQ81dE2'; // ضع مفتاح API الخاص بك هنا
+    const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
+
+    let appData = {
+      messages: [
+        {
+          id: "initial_message_" + Date.now(),
+          username: "محمد",
+          text: "مرحباً حبيبتي مريم 💕 أهلاً بك في محادثتنا الخاصة",
+          timestamp: Date.now(),
+          group: "الدردشة الرئيسية"
+        }
+      ],
+      users: {
+        "محمد": { 
+          password: "mohammed123", 
+          avatar: "https://scontent.fcai19-7.fna.fbcdn.net/v/t39.30808-6/515439941_122146277504855091_3972673970746458334_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=TCoGknTvy8sQ7kNvwFJuMVm&_nc_oc=AdmJnbGBXJv-soYX1XiD-SJM535LhJXhdo_pXgl5p3rYWHnzgFfOuvDBeID92BkuW9Y&_nc_zt=23&_nc_ht=scontent.fcai19-7.fna&_nc_gid=SkP9kB46rlJ54F8rIsH8UA&oh=00_AfgSjXZ4Qb-CP91-Ft-mbCS38JoHzTLMV0F9tmzwPEfb2w&oe=690E9D45", 
+          isAdmin: true,
+          lastSeen: Date.now(),
+          isOnline: false,
+          isTyping: false
+        },
+        "مريم": { 
+          password: null, 
+          avatar: "https://www.bing.com/th/id/OIP.lItTa0rr0wPGsvndICOdOQHaHa?w=202&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2", 
+          isAdmin: false,
+          lastSeen: Date.now(),
+          isOnline: false,
+          isTyping: false
+        }
+      },
+      groups: ["الدردشة الرئيسية"],
+      currentGroup: "الدردشة الرئيسية"
+    };
+
+    let currentUser = null;
+    let pollingInterval = null;
+    let typingTimeout = null;
+
+    const EMOJIS = ["❤️", "😍", "🥰", "😘", "💕", "💖", "💗", "💓", "💞", "💝", "🌹", "🌺", "🌸", "✨", "⭐", "🌟", "💫", "🎉", "🎊", "🎈"];
+
+    // وظائف التخزين المحلي
+    function saveToLocalStorage(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        console.error('فشل في الحفظ المحلي:', e);
+      }
+    }
+
+    function loadFromLocalStorage(key) {
+      try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : null;
+      } catch (e) {
+        console.error('فشل في التحميل المحلي:', e);
+        return null;
+      }
+    }
+
+    // وظائف jsonbin.io
+    async function fetchAppData() {
+      try {
+        const response = await fetch(`${JSONBIN_BASE_URL}/b/${JSONBIN_BIN_ID}/latest`, {
+          method: 'GET',
+          headers: {
+            'X-Master-Key': JSONBIN_API_KEY,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return data.record || appData;
+        } else {
+          console.error('فشل في جلب البيانات:', response.status);
+          return appData;
+        }
+      } catch (error) {
+        console.error('خطأ في جلب البيانات:', error);
+        return appData;
+      }
+    }
+
+    async function saveAppData(data) {
+      try {
+        const response = await fetch(`${JSONBIN_BASE_URL}/b/${JSONBIN_BIN_ID}`, {
+          method: 'PUT',
+          headers: {
+            'X-Master-Key': JSONBIN_API_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        return response.ok;
+      } catch (error) {
+        console.error('خطأ في حفظ البيانات:', error);
+        return false;
+      }
+    }
+
+    // تحديث حالة المستخدم
+    async function updateUserStatus(isOnline = true, isTyping = false) {
+      if (!currentUser) return;
+      
+      appData.users[currentUser].lastSeen = Date.now();
+      appData.users[currentUser].isOnline = isOnline;
+      appData.users[currentUser].isTyping = isTyping;
+      
+      await saveAppData(appData);
+    }
+
+    // وظائف الإشعارات
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // صفحة تسجيل الدخول
+    function renderLogin() {
+      const savedUser = loadFromLocalStorage('currentUser');
+      if (savedUser && appData.users[savedUser]) {
+        if (appData.users[savedUser].password) {
+          renderPasswordLogin(savedUser);
+        } else {
+          currentUser = savedUser;
+          updateUserStatus(true);
+          renderChat();
+        }
+        return;
+      }
+
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="login-container">
+          <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-6">
+              <div class="text-6xl mb-4">💕</div>
+              <h1 class="text-4xl font-bold text-purple-600 mb-2">محادثة رومانسية</h1>
+              <p class="text-gray-600">اختر حسابك للدخول إلى المحادثة</p>
+            </div>
+            
+            <div class="space-y-4">
+              ${Object.keys(appData.users).map(username => `
+                <button onclick="selectUser('${username}')" class="w-full py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all hover:scale-105 shadow-lg" style="background: linear-gradient(135deg, ${username === 'محمد' ? '#667eea' : '#f093fb'} 0%, ${username === 'محمد' ? '#764ba2' : '#f5576c'} 100%)">
+                  <div class="flex items-center justify-center gap-3">
+                    <div class="avatar" style="width: 40px; height: 40px;">
+                      <img src="${appData.users[username].avatar}" alt="${username}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>${username === 'محمد' ? '👨' : '👩'}</text></svg>'">
+                    </div>
+                    <span>${username}</span>
+                    ${appData.users[username].password ? '<span class="text-xs">🔒</span>' : ''}
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPasswordLogin(username) {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="login-container">
+          <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-6">
+              <div class="avatar mx-auto mb-4" style="width: 80px; height: 80px;">
+                <img src="${appData.users[username].avatar}" alt="${username}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>${username === 'محمد' ? '👨' : '👩'}</text></svg>'">
+              </div>
+              <h2 class="text-2xl font-bold text-purple-600 mb-2">مرحباً ${username}</h2>
+              <p class="text-gray-600">أدخل كلمة المرور للدخول</p>
+            </div>
+            
+            <form onsubmit="loginWithPassword(event, '${username}')">
+              <div class="mb-4">
+                <input 
+                  type="password" 
+                  id="passwordInput"
+                  placeholder="كلمة المرور"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-400 transition-colors text-center"
+                  required
+                />
+              </div>
+              <button type="submit" class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                دخول 🔓
+              </button>
+            </form>
+
+            <div class="mt-4 text-center">
+              <button onclick="renderLogin()" class="text-gray-500 hover:text-gray-700 text-sm">
+                ← العودة لاختيار المستخدم
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('passwordInput').focus();
+    }
+
+    function selectUser(username) {
+      if (appData.users[username].password) {
+        renderPasswordLogin(username);
+      } else {
+        login(username);
+      }
+    }
+
+    function loginWithPassword(event, username) {
+      event.preventDefault();
+      const password = document.getElementById('passwordInput').value;
+      
+      if (password === appData.users[username].password) {
+        login(username);
+      } else {
+        showNotification('كلمة المرور غير صحيحة', 'error');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+      }
+    }
+
+    function login(username) {
+      currentUser = username;
+      saveToLocalStorage('currentUser', username);
+      updateUserStatus(true);
+      showNotification(`مرحباً ${username}! 💕`, 'success');
+      renderChat();
+    }
+
+    function logout() {
+      if (currentUser) {
+        updateUserStatus(false);
+      }
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+      }
+      showNotification('تم تسجيل الخروج بنجاح', 'success');
+      renderLogin();
+    }
+
+    function emergencyLogout() {
+      // خروج فوري بدون انتظار
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+      }
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+        typingTimeout = null;
+      }
+      showNotification('تم الخروج الفوري! ⚡', 'success');
+      
+      // إغلاق الصفحة وفتح يوتيوب
+      setTimeout(() => {
+        window.open('https://www.youtube.com', '_blank');
+        window.close();
+      }, 1000);
+    }
+
+    // واجهة المحادثة
+    function renderChat() {
+      const app = document.getElementById('app');
+      const otherUsers = Object.keys(appData.users).filter(u => u !== currentUser);
+      
+      app.innerHTML = `
+        <div class="chat-layout">
+          <div class="chat-sidebar">
+            <div class="sidebar-header">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="relative">
+                  <div class="avatar" onclick="changeAvatar('${currentUser}')" style="width: 45px; height: 45px;">
+                    <img src="${appData.users[currentUser].avatar}" alt="${currentUser}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>${currentUser === 'محمد' ? '👨' : '👩'}</text></svg>'">
+                  </div>
+                  <div class="online-indicator absolute -bottom-1 -right-1"></div>
+                </div>
+                <div>
+                  <h2 class="font-bold text-lg">${currentUser}</h2>
+                  <p class="text-sm opacity-90">متصل الآن</p>
+                </div>
+              </div>
+              
+              <div class="flex gap-2">
+                ${appData.users[currentUser].isAdmin && currentUser === 'محمد' ? `
+                  <button onclick="showAdminPanel()" class="px-3 py-1 bg-white bg-opacity-20 text-white rounded text-sm hover:bg-opacity-30 transition-colors">
+                    ⚙️ إدارة
+                  </button>
+                ` : ''}
+                <button onclick="logout()" class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors">
+                  🚪 خروج
+                </button>
+                <button onclick="emergencyLogout()" class="px-3 py-1 bg-red-700 text-white rounded text-sm hover:bg-red-800 transition-colors">
+                  ⚡ خروج فوري
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto">
+              <div class="p-3 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-700 mb-2">💬 الدردشات</h3>
+              </div>
+              
+              ${appData.groups.map(group => `
+                <div class="group-item ${group === appData.currentGroup ? 'active' : ''}" onclick="switchGroup('${group}')">
+                  <div class="flex-1">
+                    <div class="font-semibold text-gray-800">${group}</div>
+                    <div class="text-sm text-gray-500">${appData.messages.filter(m => (m.group === group || (!m.group && group === 'الدردشة الرئيسية'))).length} رسالة</div>
+                  </div>
+                  ${group === appData.currentGroup ? '<div class="text-blue-600">📍</div>' : ''}
+                </div>
+              `).join('')}
+              
+              <div class="p-3 border-t border-gray-200">
+                <h3 class="font-semibold text-gray-700 mb-2">👥 المستخدمون</h3>
+                ${otherUsers.map(user => `
+                  <div class="flex items-center gap-2 mb-2">
+                    <div class="relative">
+                      <div class="avatar" style="width: 30px; height: 30px;">
+                        <img src="${appData.users[user].avatar}" alt="${user}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>${user === 'محمد' ? '👨' : '👩'}</text></svg>'">
+                      </div>
+                      <div class="${appData.users[user].isOnline ? 'online-indicator' : 'offline-indicator'} absolute -bottom-1 -right-1" style="width: 8px; height: 8px;"></div>
+                    </div>
+                    <div class="text-sm">
+                      <div class="font-semibold">${user}</div>
+                      <div class="text-gray-500">${appData.users[user].isOnline ? 'متصل' : 'غير متصل'}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-main">
+            <div class="bg-white shadow-md p-4 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="md:hidden p-2 hover:bg-gray-100 rounded">
+                  ☰
+                </button>
+                <div>
+                  <h2 class="font-bold text-lg text-purple-600">${appData.currentGroup}</h2>
+                  <p class="text-sm text-gray-500">${appData.messages.filter(m => (m.group === appData.currentGroup || (!m.group && appData.currentGroup === 'الدردشة الرئيسية'))).length} رسالة</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="messagesArea" class="messages-area"></div>
+
+            <div class="input-area relative">
+              <div class="flex gap-2">
+                <button onclick="toggleEmojiPicker()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-2xl">
+                  😊
+                </button>
+                <input 
+                  type="text" 
+                  id="messageInput" 
+                  placeholder="اكتب رسالتك الرومانسية هنا... 💕"
+                  class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-400 transition-colors"
+                  maxlength="500"
+                  oninput="handleTyping()"
+                />
+                <button onclick="sendMessage()" class="px-6 py-3 text-white rounded-lg font-semibold hover:opacity-90 transition-all" style="background: ${currentUser === 'محمد' ? '#667eea' : '#f093fb'}">
+                  إرسال 💕
+                </button>
+              </div>
+              <div id="emojiPicker" class="emoji-picker"></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      setupEmojiPicker();
+      setupEventListeners();
+      loadAndRenderMessages();
+      startPolling();
+    }
+
+    function setupEmojiPicker() {
+      const emojiPicker = document.getElementById('emojiPicker');
+      emojiPicker.innerHTML = '';
+      
+      EMOJIS.forEach(emoji => {
+        const btn = document.createElement('span');
+        btn.className = 'emoji-btn';
+        btn.textContent = emoji;
+        btn.onclick = () => {
+          const input = document.getElementById('messageInput');
+          input.value += emoji;
+          input.focus();
+          emojiPicker.classList.remove('show');
+        };
+        emojiPicker.appendChild(btn);
+      });
+    }
+
+    function toggleEmojiPicker() {
+      const emojiPicker = document.getElementById('emojiPicker');
+      emojiPicker.classList.toggle('show');
+    }
+
+    function setupEventListeners() {
+      const messageInput = document.getElementById('messageInput');
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#emojiPicker') && !e.target.closest('button[onclick="toggleEmojiPicker()"]')) {
+          document.getElementById('emojiPicker').classList.remove('show');
+        }
+      });
+    }
+
+    function handleTyping() {
+      updateUserStatus(true, true);
+      
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        updateUserStatus(true, false);
+      }, 2000);
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      
+      if (!text) return;
+
+      const sendBtn = document.querySelector('button[onclick="sendMessage()"]');
+      const originalText = sendBtn.textContent;
+      
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'جاري الإرسال...';
+      sendBtn.classList.add('loading');
+
+      const message = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        username: currentUser,
+        text: text,
+        timestamp: Date.now(),
+        group: appData.currentGroup
+      };
+
+      appData.messages.push(message);
+      await updateUserStatus(true, false);
+      
+      const success = await saveAppData(appData);
+      
+      if (success) {
+        input.value = '';
+        document.getElementById('emojiPicker').classList.remove('show');
+        renderMessages();
+        showNotification('تم إرسال الرسالة! 💕', 'success');
+      } else {
+        appData.messages.pop();
+        showNotification('فشل إرسال الرسالة. حاول مرة أخرى.', 'error');
+      }
+
+      sendBtn.disabled = false;
+      sendBtn.textContent = originalText;
+      sendBtn.classList.remove('loading');
+    }
+
+    async function loadAndRenderMessages() {
+      const fetchedData = await fetchAppData();
+      appData = { ...appData, ...fetchedData };
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const messagesArea = document.getElementById('messagesArea');
+      if (!messagesArea) return;
+
+      const groupMessages = appData.messages.filter(msg => 
+        msg.group === appData.currentGroup || !msg.group
+      );
+      const sortedMessages = [...groupMessages].sort((a, b) => a.timestamp - b.timestamp);
+
+      if (sortedMessages.length === 0) {
+        messagesArea.innerHTML = `
+          <div class="flex items-center justify-center h-full">
+            <div class="text-center p-8">
+              <div class="text-6xl mb-4">💕</div>
+              <h3 class="text-xl font-bold text-gray-600 mb-2">ابدأ محادثتكم الرومانسية</h3>
+              <p class="text-gray-500">اكتب أول رسالة حب لبدء المحادثة</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // إضافة مؤشر الكتابة
+      const typingUsers = Object.keys(appData.users).filter(user => 
+        user !== currentUser && appData.users[user].isTyping
+      );
+
+      messagesArea.innerHTML = sortedMessages.map(msg => {
+        const isMohamed = msg.username === 'محمد';
+        const messageClass = isMohamed ? 'message-left' : 'message-right';
+        const alignClass = isMohamed ? 'justify-start' : 'justify-end';
+        const canEdit = appData.users[currentUser].isAdmin || msg.username === currentUser;
+        
+        const date = new Date(msg.timestamp);
+        const timeStr = date.toLocaleTimeString('ar-SA', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: true 
+        });
+
+        return `
+          <div class="flex ${alignClass} mb-4 items-end gap-2 animate-fadeIn message-container">
+            ${isMohamed ? `<div class="avatar" style="width: 40px; height: 40px;"><img src="${appData.users[msg.username].avatar}" alt="${msg.username}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>👨</text></svg>'"></div>` : ''}
+            <div class="flex flex-col">
+              <div class="${messageClass} px-4 py-3 max-w-xs shadow-lg transform hover:scale-105 transition-transform">
+                <p class="font-semibold text-sm mb-1 text-white opacity-90">${msg.username}</p>
+                <p class="text-base text-white leading-relaxed">${escapeHtml(msg.text)}</p>
+                <p class="text-xs mt-2 text-white opacity-75">${timeStr}</p>
+              </div>
+              ${canEdit ? `
+                <div class="message-actions">
+                  <button onclick="editMessage('${msg.id}')" class="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors">
+                    ✏️ تعديل
+                  </button>
+                  <button onclick="deleteMessage('${msg.id}')" class="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors">
+                    🗑️ حذف
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+            ${!isMohamed ? `<div class="avatar" style="width: 40px; height: 40px;"><img src="${appData.users[msg.username].avatar}" alt="${msg.username}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>👩</text></svg>'"></div>` : ''}
+          </div>
+        `;
+      }).join('') + 
+      
+      (typingUsers.length > 0 ? `
+        <div class="flex justify-start mb-4">
+          <div class="typing-indicator">
+            <span class="text-sm text-gray-600">${typingUsers[0]} يكتب</span>
+            <div class="typing-dots">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
+          </div>
+        </div>
+      ` : '');
+
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function editMessage(messageId) {
+      const message = appData.messages.find(m => m.id === messageId);
+      if (!message) return;
+
+      const newText = prompt('تعديل الرسالة:', message.text);
+      if (newText && newText.trim() !== message.text) {
+        message.text = newText.trim();
+        const success = await saveAppData(appData);
+        if (success) {
+          renderMessages();
+          showNotification('تم تعديل الرسالة', 'success');
+        } else {
+          showNotification('فشل في تعديل الرسالة', 'error');
+        }
+      }
+    }
+
+    async function deleteMessage(messageId) {
+      if (confirm('هل تريد حذف هذه الرسالة؟')) {
+        appData.messages = appData.messages.filter(m => m.id !== messageId);
+        const success = await saveAppData(appData);
+        if (success) {
+          renderMessages();
+          showNotification('تم حذف الرسالة', 'success');
+        } else {
+          showNotification('فشل في حذف الرسالة', 'error');
+        }
+      }
+    }
+
+    function changeAvatar(username) {
+      if (username !== currentUser && !appData.users[currentUser].isAdmin) {
+        showNotification('لا يمكنك تغيير صورة المستخدمين الآخرين', 'error');
+        return;
+      }
+
+      const newAvatar = prompt('أدخل رابط الصورة الجديدة:', appData.users[username].avatar);
+      if (newAvatar && newAvatar.trim()) {
+        // التحقق من صحة الرابط
+        const img = new Image();
+        img.onload = async function() {
+          appData.users[username].avatar = newAvatar.trim();
+          const success = await saveAppData(appData);
+          if (success) {
+            renderChat();
+            showNotification('تم تغيير الصورة الشخصية', 'success');
+          }
+        };
+        img.onerror = function() {
+          showNotification('رابط الصورة غير صالح', 'error');
+        };
+        img.src = newAvatar.trim();
+      }
+    }
+
+    function showAdminPanel() {
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <h2 class="text-2xl font-bold mb-4 text-purple-600">🛠️ لوحة الإدارة</h2>
+          
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">👥 إدارة المستخدمين</h3>
+            <div class="space-y-2">
+              ${Object.keys(appData.users).map(user => `
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar" style="width: 30px; height: 30px;">
+                      <img src="${appData.users[user].avatar}" alt="${user}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>${user === 'محمد' ? '👨' : '👩'}</text></svg>'">
+                    </div>
+                    <span>${user}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <button onclick="editUser('${user}')" class="px-2 py-1 bg-blue-500 text-white rounded text-sm">تعديل</button>
+                    ${user !== currentUser ? `<button onclick="deleteUser('${user}')" class="px-2 py-1 bg-red-500 text-white rounded text-sm">حذف</button>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <button onclick="addUser()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+              ➕ إضافة مستخدم جديد
+            </button>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">💬 إدارة المجموعات</h3>
+            <div class="space-y-2">
+              ${appData.groups.map(group => `
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <span>${group} ${group === appData.currentGroup ? '(الحالية)' : ''}</span>
+                  <div class="flex gap-2">
+                    <button onclick="switchGroup('${group}')" class="px-2 py-1 bg-blue-500 text-white rounded text-sm">تفعيل</button>
+                    ${group !== 'الدردشة الرئيسية' ? `<button onclick="deleteGroup('${group}')" class="px-2 py-1 bg-red-500 text-white rounded text-sm">حذف</button>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <button onclick="addGroup()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+              ➕ إضافة مجموعة جديدة
+            </button>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="closeModal()" class="flex-1 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+              إغلاق
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+      };
+    }
+
+    function closeModal() {
+      const modal = document.querySelector('.modal');
+      if (modal) modal.remove();
+    }
+
+    async function addUser() {
+      const username = prompt('اسم المستخدم الجديد:');
+      if (!username || appData.users[username]) {
+        showNotification('اسم المستخدم غير صالح أو موجود بالفعل', 'error');
+        return;
+      }
+
+      const avatar = prompt('رابط صورة المستخدم:', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face');
+      const hasPassword = confirm('هل تريد إضافة كلمة مرور؟');
+      const password = hasPassword ? prompt('كلمة المرور:') : null;
+
+      appData.users[username] = {
+        password: password,
+        avatar: avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face',
+        isAdmin: false,
+        lastSeen: Date.now(),
+        isOnline: false,
+        isTyping: false
+      };
+
+      const success = await saveAppData(appData);
+      if (success) {
+        showNotification('تم إضافة المستخدم بنجاح', 'success');
+        closeModal();
+        showAdminPanel();
+      }
+    }
+
+    async function editUser(username) {
+      const user = appData.users[username];
+      const newAvatar = prompt('رابط الصورة الجديدة:', user.avatar);
+      if (newAvatar) {
+        // التحقق من صحة الرابط
+        const img = new Image();
+        img.onload = async function() {
+          user.avatar = newAvatar;
+          
+          if (confirm('تغيير كلمة المرور؟')) {
+            const newPassword = prompt('كلمة المرور الجديدة (اتركها فارغة لإزالة كلمة المرور):');
+            user.password = newPassword || null;
+          }
+
+          const success = await saveAppData(appData);
+          if (success) {
+            showNotification('تم تحديث المستخدم', 'success');
+            closeModal();
+            showAdminPanel();
+          }
+        };
+        img.onerror = function() {
+          showNotification('رابط الصورة غير صالح', 'error');
+        };
+        img.src = newAvatar;
+      } else if (confirm('تغيير كلمة المرور؟')) {
+        const newPassword = prompt('كلمة المرور الجديدة (اتركها فارغة لإزالة كلمة المرور):');
+        user.password = newPassword || null;
+        
+        const success = await saveAppData(appData);
+        if (success) {
+          showNotification('تم تحديث المستخدم', 'success');
+          closeModal();
+          showAdminPanel();
+        }
+      }
+    }
+
+    async function deleteUser(username) {
+      if (confirm(`هل تريد حذف المستخدم ${username}؟`)) {
+        delete appData.users[username];
+        appData.messages = appData.messages.filter(m => m.username !== username);
+        
+        const success = await saveAppData(appData);
+        if (success) {
+          showNotification('تم حذف المستخدم', 'success');
+          closeModal();
+          showAdminPanel();
+        }
+      }
+    }
+
+    async function addGroup() {
+      const groupName = prompt('اسم المجموعة الجديدة:');
+      if (groupName && !appData.groups.includes(groupName)) {
+        appData.groups.push(groupName);
+        const success = await saveAppData(appData);
+        if (success) {
+          showNotification('تم إضافة المجموعة', 'success');
+          closeModal();
+          showAdminPanel();
+        }
+      }
+    }
+
+    async function switchGroup(groupName) {
+      appData.currentGroup = groupName;
+      const success = await saveAppData(appData);
+      if (success) {
+        showNotification(`تم التبديل إلى ${groupName}`, 'success');
+        closeModal();
+        renderChat();
+      }
+    }
+
+    async function deleteGroup(groupName) {
+      if (confirm(`هل تريد حذف المجموعة ${groupName}؟`)) {
+        appData.groups = appData.groups.filter(g => g !== groupName);
+        appData.messages = appData.messages.filter(m => m.group !== groupName);
+        if (appData.currentGroup === groupName) {
+          appData.currentGroup = appData.groups[0];
+        }
+        
+        const success = await saveAppData(appData);
+        if (success) {
+          showNotification('تم حذف المجموعة', 'success');
+          closeModal();
+          showAdminPanel();
+        }
+      }
+    }
+
+    function startPolling() {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+      
+      pollingInterval = setInterval(async () => {
+        const fetchedData = await fetchAppData();
+        const oldMessageCount = appData.messages.length;
+        appData = { ...appData, ...fetchedData };
+        
+        if (appData.messages.length > oldMessageCount) {
+          const newMessageCount = appData.messages.length - oldMessageCount;
+          showNotification(`${newMessageCount} رسالة جديدة! 💕`, 'success');
+        }
+        
+        renderMessages();
+        
+        // تحديث حالة الاتصال في الواجهة
+        const otherUsers = Object.keys(appData.users).filter(u => u !== currentUser);
+        otherUsers.forEach(user => {
+          const userElement = document.querySelector(`[style*="${user === 'محمد' ? '#667eea' : '#f093fb'}"]`);
+          if (userElement) {
+            const indicator = userElement.parentElement.querySelector('.online-indicator, .offline-indicator');
+            if (indicator) {
+              indicator.className = appData.users[user].isOnline ? 'online-indicator absolute -bottom-1 -right-1' : 'offline-indicator absolute -bottom-1 -right-1';
+            }
+          }
+        });
+      }, 3000);
+    }
+
+    // بدء التطبيق
+    document.addEventListener('DOMContentLoaded', async () => {
+      appData = await fetchAppData();
+      renderLogin();
+    });
+
+    // تنظيف عند إغلاق الصفحة
+    window.addEventListener('beforeunload', () => {
+      if (currentUser) {
+        updateUserStatus(false);
+      }
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+    });
+
+    function toggleSidebar() {
+      const layout = document.querySelector('.chat-layout');
+      if (layout) {
+        layout.classList.toggle('mobile-hide-sidebar');
+      }
+    }
+
+    // جعل الوظائف متاحة عالمياً
+    window.selectUser = selectUser;
+    window.loginWithPassword = loginWithPassword;
+    window.logout = logout;
+    window.emergencyLogout = emergencyLogout;
+    window.sendMessage = sendMessage;
+    window.toggleEmojiPicker = toggleEmojiPicker;
+    window.handleTyping = handleTyping;
+    window.changeAvatar = changeAvatar;
+    window.editMessage = editMessage;
+    window.deleteMessage = deleteMessage;
+    window.showAdminPanel = showAdminPanel;
+    window.closeModal = closeModal;
+    window.addUser = addUser;
+    window.editUser = editUser;
+    window.deleteUser = deleteUser;
+    window.addGroup = addGroup;
+    window.switchGroup = switchGroup;
+    window.deleteGroup = deleteGroup;
+    window.toggleSidebar = toggleSidebar;
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'998d900195601858',t:'MTc2MjE5MDYzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
