@@ -253,6 +253,102 @@
       display: flex;
       height: 100vh;
     }
+    .file-attachment {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 8px 0;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .file-attachment:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    .file-icon {
+      font-size: 48px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .file-info {
+      color: white;
+      font-size: 14px;
+    }
+    .file-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+    .file-size {
+      opacity: 0.8;
+      font-size: 12px;
+    }
+    .file-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .file-btn {
+      padding: 4px 8px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .file-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .upload-progress {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+    .upload-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    .file-drop-zone {
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      background: #f9fafb;
+      transition: all 0.3s ease;
+      margin: 8px 0;
+    }
+    .file-drop-zone.dragover {
+      border-color: #667eea;
+      background: #e0e7ff;
+    }
+    .file-preview {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .chunk-upload-status {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 4px;
+    }
     @media (max-width: 768px) {
       .avatar {
         width: 40px;
@@ -272,6 +368,12 @@
       .chat-layout.mobile-hide-sidebar .chat-sidebar {
         display: none;
       }
+      .file-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+      .file-icon {
+        font-size: 36px;
+      }
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -282,7 +384,7 @@
   <div id="app"></div>
   <script>
     // إعدادات jsonbin.io
-    const JSONBIN_BIN_ID = '6908d51eae596e708f41ee87';
+    const JSONBIN_BIN_ID = '6908d51eae596e708f41ee87'; // ضع معرف الـ Bin الخاص بك هنا
     const JSONBIN_API_KEY = '$2a$10$hJudGjs2DM9GszivDobyS.5YXXS8HRiPobc9XxhYDUM5dtZQ81dE2'; // ضع مفتاح API الخاص بك هنا
     const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
 
@@ -324,6 +426,11 @@
 
     const EMOJIS = ["❤️", "😍", "🥰", "😘", "💕", "💖", "💗", "💓", "💞", "💝", "🌹", "🌺", "🌸", "✨", "⭐", "🌟", "💫", "🎉", "🎊", "🎈"];
 
+    // إعدادات نظام الملفات
+    const FILE_CHUNK_SIZE = 1024 * 1024; // 1MB per chunk
+    const MAX_FILE_SIZE = 1024 * 1024 * 1024 * 5; // 5GB maximum
+    let uploadingFiles = new Map(); // تتبع الملفات قيد الرفع
+
     // وظائف التخزين المحلي
     function saveToLocalStorage(key, value) {
       try {
@@ -340,6 +447,316 @@
       } catch (e) {
         console.error('فشل في التحميل المحلي:', e);
         return null;
+      }
+    }
+
+    // وظائف معالجة الملفات
+    function getFileIcon(fileName, fileType) {
+      const extension = fileName.split('.').pop().toLowerCase();
+      
+      // الصور
+      if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(extension)) {
+        return '🖼️';
+      }
+      // الفيديو
+      if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(extension)) {
+        return '🎥';
+      }
+      // الصوت
+      if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(extension)) {
+        return '🎵';
+      }
+      // المستندات
+      if (['pdf'].includes(extension)) {
+        return '📄';
+      }
+      if (['doc', 'docx'].includes(extension)) {
+        return '📝';
+      }
+      if (['xls', 'xlsx'].includes(extension)) {
+        return '📊';
+      }
+      if (['ppt', 'pptx'].includes(extension)) {
+        return '📋';
+      }
+      // الأرشيف
+      if (['zip', 'rar', '7z', 'tar', 'gz'].includes(extension)) {
+        return '📦';
+      }
+      // البرمجة
+      if (['js', 'html', 'css', 'py', 'java', 'cpp', 'c', 'php'].includes(extension)) {
+        return '💻';
+      }
+      // النصوص
+      if (['txt', 'md', 'rtf'].includes(extension)) {
+        return '📃';
+      }
+      
+      return '📎'; // أيقونة افتراضية
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 بايت';
+      
+      const k = 1024;
+      const sizes = ['بايت', 'كيلوبايت', 'ميجابايت', 'جيجابايت', 'تيرابايت'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function isImageFile(fileName) {
+      const extension = fileName.split('.').pop().toLowerCase();
+      return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension);
+    }
+
+    function isVideoFile(fileName) {
+      const extension = fileName.split('.').pop().toLowerCase();
+      return ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(extension);
+    }
+
+    function isAudioFile(fileName) {
+      const extension = fileName.split('.').pop().toLowerCase();
+      return ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(extension);
+    }
+
+    // تحويل الملف إلى Base64 مع التقسيم
+    async function fileToBase64Chunks(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64 = e.target.result.split(',')[1]; // إزالة البادئة
+          const chunks = [];
+          
+          for (let i = 0; i < base64.length; i += FILE_CHUNK_SIZE) {
+            chunks.push(base64.slice(i, i + FILE_CHUNK_SIZE));
+          }
+          
+          resolve(chunks);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // دمج أجزاء الملف
+    function mergeFileChunks(chunks) {
+      return chunks.join('');
+    }
+
+    // حفظ الملف في التخزين المحلي مؤقتاً
+    function saveFileToLocalStorage(fileId, fileData) {
+      try {
+        // تقسيم البيانات إلى أجزاء صغيرة لتجنب حدود localStorage
+        const chunkSize = 1024 * 500; // 500KB per localStorage chunk
+        const chunks = [];
+        
+        for (let i = 0; i < fileData.length; i += chunkSize) {
+          chunks.push(fileData.slice(i, i + chunkSize));
+        }
+        
+        localStorage.setItem(`file_${fileId}_chunks`, chunks.length.toString());
+        chunks.forEach((chunk, index) => {
+          localStorage.setItem(`file_${fileId}_chunk_${index}`, chunk);
+        });
+        
+        return true;
+      } catch (e) {
+        console.error('فشل في حفظ الملف محلياً:', e);
+        return false;
+      }
+    }
+
+    // استرجاع الملف من التخزين المحلي
+    function loadFileFromLocalStorage(fileId) {
+      try {
+        const chunkCount = parseInt(localStorage.getItem(`file_${fileId}_chunks`) || '0');
+        if (chunkCount === 0) return null;
+        
+        const chunks = [];
+        for (let i = 0; i < chunkCount; i++) {
+          const chunk = localStorage.getItem(`file_${fileId}_chunk_${i}`);
+          if (chunk) chunks.push(chunk);
+        }
+        
+        return chunks.join('');
+      } catch (e) {
+        console.error('فشل في تحميل الملف محلياً:', e);
+        return null;
+      }
+    }
+
+    // حذف الملف من التخزين المحلي
+    function deleteFileFromLocalStorage(fileId) {
+      try {
+        const chunkCount = parseInt(localStorage.getItem(`file_${fileId}_chunks`) || '0');
+        
+        localStorage.removeItem(`file_${fileId}_chunks`);
+        for (let i = 0; i < chunkCount; i++) {
+          localStorage.removeItem(`file_${fileId}_chunk_${i}`);
+        }
+        
+        return true;
+      } catch (e) {
+        console.error('فشل في حذف الملف محلياً:', e);
+        return false;
+      }
+    }
+
+    // نظام الإشعارات
+    let notificationPermission = 'default';
+    let lastMessageCount = 0;
+    let isWindowFocused = true;
+    let notificationSound = null;
+
+    // طلب إذن الإشعارات
+    async function requestNotificationPermission() {
+      if ('Notification' in window) {
+        notificationPermission = await Notification.requestPermission();
+        if (notificationPermission === 'granted') {
+          showNotification('تم تفعيل الإشعارات! 🔔', 'success');
+          // إرسال إشعار تجريبي
+          setTimeout(() => {
+            sendDesktopNotification(
+              '💕 محادثة رومانسية',
+              'تم تفعيل الإشعارات بنجاح! ستصلك إشعارات عند وصول رسائل جديدة',
+              '🔔'
+            );
+          }, 1000);
+        } else if (notificationPermission === 'denied') {
+          showNotification('تم رفض الإشعارات. يمكنك تفعيلها من إعدادات المتصفح', 'error');
+        }
+        updateNotificationButton();
+      } else {
+        showNotification('المتصفح لا يدعم الإشعارات', 'error');
+      }
+    }
+
+    // إنشاء صوت الإشعار
+    function createNotificationSound() {
+      // إنشاء نغمة بسيطة باستخدام Web Audio API
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playNotificationSound() {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+          oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+          
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        return playNotificationSound;
+      } catch (e) {
+        console.log('لا يمكن إنشاء صوت الإشعار:', e);
+        return null;
+      }
+    }
+
+    // إرسال إشعار سطح المكتب
+    function sendDesktopNotification(title, body, icon = '💕') {
+      if (notificationPermission === 'granted' && !isWindowFocused) {
+        const notification = new Notification(title, {
+          body: body,
+          icon: `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${icon}</text></svg>`,
+          badge: `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>`,
+          tag: 'romantic-chat',
+          requireInteraction: true,
+          silent: false
+        });
+
+        notification.onclick = function() {
+          window.focus();
+          notification.close();
+        };
+
+        // إغلاق الإشعار تلقائياً بعد 5 ثوانٍ
+        setTimeout(() => {
+          notification.close();
+        }, 5000);
+
+        return notification;
+      }
+      return null;
+    }
+
+    // تشغيل صوت الإشعار
+    function playNotificationSound() {
+      if (notificationSound && !isWindowFocused) {
+        try {
+          notificationSound();
+        } catch (e) {
+          console.log('لا يمكن تشغيل صوت الإشعار:', e);
+        }
+      }
+    }
+
+    // مراقبة حالة النافذة
+    function setupWindowFocusTracking() {
+      window.addEventListener('focus', () => {
+        isWindowFocused = true;
+        // إزالة العداد من عنوان الصفحة
+        document.title = '💕 محادثة رومانسية - محمد ومريم 💕';
+      });
+
+      window.addEventListener('blur', () => {
+        isWindowFocused = false;
+      });
+
+      // مراقبة رؤية الصفحة
+      document.addEventListener('visibilitychange', () => {
+        isWindowFocused = !document.hidden;
+        if (isWindowFocused) {
+          document.title = '💕 محادثة رومانسية - محمد ومريم 💕';
+        }
+      });
+    }
+
+    // تحديث عنوان الصفحة مع عدد الرسائل الجديدة
+    function updatePageTitle(newMessageCount = 0) {
+      if (newMessageCount > 0 && !isWindowFocused) {
+        document.title = `(${newMessageCount}) رسائل جديدة - محادثة رومانسية 💕`;
+        
+        // وميض أيقونة الصفحة
+        let isOriginalIcon = true;
+        const originalIcon = document.querySelector('link[rel="icon"]');
+        
+        const flashInterval = setInterval(() => {
+          if (isWindowFocused) {
+            clearInterval(flashInterval);
+            return;
+          }
+          
+          const iconUrl = isOriginalIcon 
+            ? `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🔔</text></svg>`
+            : `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>`;
+          
+          if (originalIcon) {
+            originalIcon.href = iconUrl;
+          }
+          
+          isOriginalIcon = !isOriginalIcon;
+        }, 1000);
+        
+        // إيقاف الوميض عند العودة للنافذة
+        const stopFlashing = () => {
+          clearInterval(flashInterval);
+          if (originalIcon) {
+            originalIcon.href = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>`;
+          }
+          window.removeEventListener('focus', stopFlashing);
+        };
+        
+        window.addEventListener('focus', stopFlashing);
       }
     }
 
@@ -576,7 +993,10 @@
                 </div>
               </div>
               
-              <div class="flex gap-2">
+              <div class="flex gap-2 flex-wrap">
+                <button onclick="requestNotificationPermission()" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors" id="notificationBtn">
+                  🔔 تفعيل الإشعارات
+                </button>
                 ${appData.users[currentUser].isAdmin && currentUser === 'محمد' ? `
                   <button onclick="showAdminPanel()" class="px-3 py-1 bg-white bg-opacity-20 text-white rounded text-sm hover:bg-opacity-30 transition-colors">
                     ⚙️ إدارة
@@ -646,6 +1066,9 @@
                 <button onclick="toggleEmojiPicker()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-2xl">
                   😊
                 </button>
+                <button onclick="triggerFileUpload()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-2xl" title="إرفاق ملف">
+                  📎
+                </button>
                 <input 
                   type="text" 
                   id="messageInput" 
@@ -658,6 +1081,17 @@
                   إرسال 💕
                 </button>
               </div>
+              
+              <!-- منطقة إسقاط الملفات -->
+              <div id="fileDropZone" class="file-drop-zone" style="display: none;">
+                <div class="text-4xl mb-2">📁</div>
+                <p class="text-gray-600 font-semibold">اسحب الملفات هنا أو انقر لاختيارها</p>
+                <p class="text-sm text-gray-500 mt-1">يدعم جميع أنواع الملفات حتى 5 جيجابايت</p>
+              </div>
+              
+              <!-- مدخل الملفات المخفي -->
+              <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileSelect(event)">
+              
               <div id="emojiPicker" class="emoji-picker"></div>
             </div>
           </div>
@@ -666,6 +1100,8 @@
 
       setupEmojiPicker();
       setupEventListeners();
+      setupWindowFocusTracking();
+      setupNotificationSystem();
       loadAndRenderMessages();
       startPolling();
     }
@@ -706,6 +1142,262 @@
           document.getElementById('emojiPicker').classList.remove('show');
         }
       });
+
+      // إعداد منطقة إسقاط الملفات
+      setupFileDropZone();
+    }
+
+    function setupFileDropZone() {
+      const dropZone = document.getElementById('fileDropZone');
+      const fileInput = document.getElementById('fileInput');
+      const inputArea = document.querySelector('.input-area');
+
+      if (!dropZone || !fileInput || !inputArea) return;
+
+      // منع السلوك الافتراضي للسحب والإفلات
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        inputArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // إظهار منطقة الإسقاط عند السحب
+      ['dragenter', 'dragover'].forEach(eventName => {
+        inputArea.addEventListener(eventName, () => {
+          dropZone.style.display = 'block';
+          dropZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        inputArea.addEventListener(eventName, () => {
+          dropZone.classList.remove('dragover');
+          setTimeout(() => {
+            if (!dropZone.classList.contains('dragover')) {
+              dropZone.style.display = 'none';
+            }
+          }, 100);
+        });
+      });
+
+      // معالجة إسقاط الملفات
+      inputArea.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+      });
+
+      // النقر على منطقة الإسقاط
+      dropZone.addEventListener('click', () => {
+        fileInput.click();
+      });
+    }
+
+    function triggerFileUpload() {
+      document.getElementById('fileInput').click();
+    }
+
+    function handleFileSelect(event) {
+      const files = event.target.files;
+      handleFiles(files);
+      // إعادة تعيين قيمة المدخل
+      event.target.value = '';
+    }
+
+    async function handleFiles(files) {
+      if (!files || files.length === 0) return;
+
+      for (let file of files) {
+        if (file.size > MAX_FILE_SIZE) {
+          showNotification(`الملف ${file.name} كبير جداً. الحد الأقصى 5 جيجابايت`, 'error');
+          continue;
+        }
+
+        await uploadFile(file);
+      }
+    }
+
+    async function uploadFile(file) {
+      const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+      const fileName = file.name;
+      const fileSize = file.size;
+      const fileType = file.type;
+
+      // إضافة الملف إلى قائمة الرفع
+      uploadingFiles.set(fileId, {
+        file: file,
+        fileName: fileName,
+        fileSize: fileSize,
+        fileType: fileType,
+        progress: 0,
+        status: 'uploading'
+      });
+
+      // إظهار مؤشر التقدم
+      showUploadProgress(fileId, fileName, fileSize);
+
+      try {
+        // تحويل الملف إلى Base64
+        showNotification('جاري تحضير الملف...', 'success');
+        updateUploadProgress(fileId, 10, 'تحضير الملف...');
+
+        const base64Data = await fileToBase64Chunks(file);
+        updateUploadProgress(fileId, 30, 'حفظ الملف محلياً...');
+
+        // حفظ الملف محلياً
+        const localSaved = saveFileToLocalStorage(fileId, base64Data.join(''));
+        if (!localSaved) {
+          throw new Error('فشل في حفظ الملف محلياً');
+        }
+
+        updateUploadProgress(fileId, 60, 'إرسال الملف...');
+
+        // إنشاء رسالة الملف
+        const fileMessage = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          username: currentUser,
+          text: `📎 تم إرفاق ملف: ${fileName}`,
+          timestamp: Date.now(),
+          group: appData.currentGroup,
+          fileAttachment: {
+            id: fileId,
+            name: fileName,
+            size: fileSize,
+            type: fileType,
+            icon: getFileIcon(fileName, fileType),
+            chunks: base64Data.length,
+            uploadedBy: currentUser,
+            uploadedAt: Date.now()
+          }
+        };
+
+        appData.messages.push(fileMessage);
+        updateUploadProgress(fileId, 80, 'حفظ في الخادم...');
+
+        const success = await saveAppData(appData);
+        
+        if (success) {
+          updateUploadProgress(fileId, 100, 'تم الرفع بنجاح!');
+          uploadingFiles.get(fileId).status = 'completed';
+          
+          setTimeout(() => {
+            removeUploadProgress(fileId);
+          }, 2000);
+
+          renderMessages();
+          showNotification(`تم رفع الملف ${fileName} بنجاح! 📎`, 'success');
+        } else {
+          throw new Error('فشل في حفظ الملف في الخادم');
+        }
+
+      } catch (error) {
+        console.error('خطأ في رفع الملف:', error);
+        uploadingFiles.get(fileId).status = 'failed';
+        updateUploadProgress(fileId, 0, 'فشل في الرفع');
+        
+        // حذف الملف من التخزين المحلي
+        deleteFileFromLocalStorage(fileId);
+        
+        setTimeout(() => {
+          removeUploadProgress(fileId);
+        }, 3000);
+
+        showNotification(`فشل في رفع الملف ${fileName}`, 'error');
+      }
+    }
+
+    function showUploadProgress(fileId, fileName, fileSize) {
+      const inputArea = document.querySelector('.input-area');
+      const progressDiv = document.createElement('div');
+      progressDiv.id = `upload-${fileId}`;
+      progressDiv.className = 'upload-progress-container';
+      progressDiv.innerHTML = `
+        <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg mb-2">
+          <div class="text-2xl">${getFileIcon(fileName)}</div>
+          <div class="flex-1">
+            <div class="font-semibold text-sm text-gray-800">${fileName}</div>
+            <div class="text-xs text-gray-600">${formatFileSize(fileSize)}</div>
+            <div class="upload-progress mt-1">
+              <div class="upload-progress-bar" id="progress-bar-${fileId}"></div>
+            </div>
+            <div class="chunk-upload-status" id="status-${fileId}">بدء الرفع...</div>
+          </div>
+          <button onclick="cancelUpload('${fileId}')" class="text-red-500 hover:text-red-700 text-sm">
+            ❌
+          </button>
+        </div>
+      `;
+      
+      inputArea.insertBefore(progressDiv, inputArea.firstChild);
+    }
+
+    function updateUploadProgress(fileId, progress, status) {
+      const progressBar = document.getElementById(`progress-bar-${fileId}`);
+      const statusElement = document.getElementById(`status-${fileId}`);
+      
+      if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+      }
+      
+      if (statusElement) {
+        statusElement.textContent = status;
+      }
+
+      if (uploadingFiles.has(fileId)) {
+        uploadingFiles.get(fileId).progress = progress;
+      }
+    }
+
+    function removeUploadProgress(fileId) {
+      const progressDiv = document.getElementById(`upload-${fileId}`);
+      if (progressDiv) {
+        progressDiv.remove();
+      }
+      uploadingFiles.delete(fileId);
+    }
+
+    function cancelUpload(fileId) {
+      if (uploadingFiles.has(fileId)) {
+        const fileData = uploadingFiles.get(fileId);
+        deleteFileFromLocalStorage(fileId);
+        removeUploadProgress(fileId);
+        showNotification(`تم إلغاء رفع ${fileData.fileName}`, 'success');
+      }
+    }
+
+    function setupNotificationSystem() {
+      // إنشاء صوت الإشعار
+      notificationSound = createNotificationSound();
+      
+      // تحديث حالة زر الإشعارات
+      updateNotificationButton();
+      
+      // تهيئة عداد الرسائل
+      lastMessageCount = appData.messages.length;
+    }
+
+    function updateNotificationButton() {
+      const btn = document.getElementById('notificationBtn');
+      if (btn) {
+        if (notificationPermission === 'granted') {
+          btn.textContent = '🔔 الإشعارات مفعلة';
+          btn.className = 'px-3 py-1 bg-green-600 text-white rounded text-sm cursor-default';
+          btn.onclick = null;
+        } else if (notificationPermission === 'denied') {
+          btn.textContent = '🔕 الإشعارات مرفوضة';
+          btn.className = 'px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors';
+          btn.onclick = () => {
+            showNotification('يرجى تفعيل الإشعارات من إعدادات المتصفح', 'error');
+          };
+        } else {
+          btn.textContent = '🔔 تفعيل الإشعارات';
+          btn.className = 'px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors';
+          btn.onclick = requestNotificationPermission;
+        }
+      }
     }
 
     function handleTyping() {
@@ -813,6 +1505,32 @@
               <div class="${messageClass} px-4 py-3 max-w-xs shadow-lg transform hover:scale-105 transition-transform">
                 <p class="font-semibold text-sm mb-1 text-white opacity-90">${msg.username}</p>
                 <p class="text-base text-white leading-relaxed">${escapeHtml(msg.text)}</p>
+                
+                ${msg.fileAttachment ? `
+                  <div class="file-attachment mt-3">
+                    <div class="file-icon">${msg.fileAttachment.icon}</div>
+                    <div class="file-info">
+                      <div class="file-name">${msg.fileAttachment.name}</div>
+                      <div class="file-size">${formatFileSize(msg.fileAttachment.size)}</div>
+                      <div class="file-actions">
+                        <button onclick="downloadFile('${msg.fileAttachment.id}', '${msg.fileAttachment.name}')" class="file-btn">
+                          💾 تحميل
+                        </button>
+                        ${isImageFile(msg.fileAttachment.name) ? `
+                          <button onclick="previewFile('${msg.fileAttachment.id}', '${msg.fileAttachment.name}', '${msg.fileAttachment.type}')" class="file-btn">
+                            👁️ معاينة
+                          </button>
+                        ` : ''}
+                        ${isVideoFile(msg.fileAttachment.name) || isAudioFile(msg.fileAttachment.name) ? `
+                          <button onclick="playMediaFile('${msg.fileAttachment.id}', '${msg.fileAttachment.name}', '${msg.fileAttachment.type}')" class="file-btn">
+                            ▶️ تشغيل
+                          </button>
+                        ` : ''}
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
+                
                 <p class="text-xs mt-2 text-white opacity-75">${timeStr}</p>
               </div>
               ${canEdit ? `
@@ -1118,11 +1836,39 @@
       pollingInterval = setInterval(async () => {
         const fetchedData = await fetchAppData();
         const oldMessageCount = appData.messages.length;
+        const oldMessages = [...appData.messages];
         appData = { ...appData, ...fetchedData };
         
+        // التحقق من الرسائل الجديدة
         if (appData.messages.length > oldMessageCount) {
-          const newMessageCount = appData.messages.length - oldMessageCount;
+          const newMessages = appData.messages.slice(oldMessageCount);
+          const newMessageCount = newMessages.length;
+          
+          // إشعار داخلي في التطبيق
           showNotification(`${newMessageCount} رسالة جديدة! 💕`, 'success');
+          
+          // معالجة كل رسالة جديدة
+          newMessages.forEach(message => {
+            // عدم إرسال إشعار للرسائل التي أرسلها المستخدم الحالي
+            if (message.username !== currentUser) {
+              // إشعار سطح المكتب
+              const senderEmoji = message.username === 'محمد' ? '👨' : '👩';
+              sendDesktopNotification(
+                `💕 رسالة من ${message.username}`,
+                message.text.length > 50 ? message.text.substring(0, 50) + '...' : message.text,
+                senderEmoji
+              );
+              
+              // تشغيل صوت الإشعار
+              playNotificationSound();
+              
+              // تحديث عنوان الصفحة
+              updatePageTitle(newMessageCount);
+            }
+          });
+          
+          // تحديث عداد الرسائل
+          lastMessageCount = appData.messages.length;
         }
         
         renderMessages();
@@ -1144,6 +1890,12 @@
     // بدء التطبيق
     document.addEventListener('DOMContentLoaded', async () => {
       appData = await fetchAppData();
+      
+      // التحقق من إذن الإشعارات المحفوظ
+      if ('Notification' in window) {
+        notificationPermission = Notification.permission;
+      }
+      
       renderLogin();
     });
 
@@ -1161,6 +1913,132 @@
       const layout = document.querySelector('.chat-layout');
       if (layout) {
         layout.classList.toggle('mobile-hide-sidebar');
+      }
+    }
+
+    // وظائف تحميل ومعاينة الملفات
+    async function downloadFile(fileId, fileName) {
+      try {
+        showNotification('جاري تحضير التحميل...', 'success');
+        
+        const fileData = loadFileFromLocalStorage(fileId);
+        if (!fileData) {
+          showNotification('لم يتم العثور على الملف', 'error');
+          return;
+        }
+
+        // تحويل Base64 إلى Blob
+        const byteCharacters = atob(fileData);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray]);
+
+        // إنشاء رابط التحميل
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showNotification(`تم تحميل ${fileName} بنجاح! 💾`, 'success');
+      } catch (error) {
+        console.error('خطأ في تحميل الملف:', error);
+        showNotification('فشل في تحميل الملف', 'error');
+      }
+    }
+
+    async function previewFile(fileId, fileName, fileType) {
+      try {
+        const fileData = loadFileFromLocalStorage(fileId);
+        if (!fileData) {
+          showNotification('لم يتم العثور على الملف', 'error');
+          return;
+        }
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+          <div class="modal-content" style="max-width: 90vw; max-height: 90vh;">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold">معاينة: ${fileName}</h2>
+              <button onclick="closeModal()" class="text-2xl hover:text-red-500">❌</button>
+            </div>
+            <div class="text-center">
+              <img src="data:${fileType || 'image/jpeg'};base64,${fileData}" 
+                   alt="${fileName}" 
+                   class="file-preview max-w-full max-h-96 mx-auto rounded-lg shadow-lg"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div style="display: none;" class="p-8 text-gray-500">
+                <div class="text-4xl mb-2">❌</div>
+                <p>لا يمكن معاينة هذا الملف</p>
+              </div>
+            </div>
+            <div class="mt-4 text-center">
+              <button onclick="downloadFile('${fileId}', '${fileName}')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                💾 تحميل الملف
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        modal.onclick = (e) => {
+          if (e.target === modal) closeModal();
+        };
+      } catch (error) {
+        console.error('خطأ في معاينة الملف:', error);
+        showNotification('فشل في معاينة الملف', 'error');
+      }
+    }
+
+    async function playMediaFile(fileId, fileName, fileType) {
+      try {
+        const fileData = loadFileFromLocalStorage(fileId);
+        if (!fileData) {
+          showNotification('لم يتم العثور على الملف', 'error');
+          return;
+        }
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        
+        const isVideo = isVideoFile(fileName);
+        const mediaTag = isVideo ? 'video' : 'audio';
+        const controls = 'controls autoplay';
+        
+        modal.innerHTML = `
+          <div class="modal-content" style="max-width: 90vw;">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold">تشغيل: ${fileName}</h2>
+              <button onclick="closeModal()" class="text-2xl hover:text-red-500">❌</button>
+            </div>
+            <div class="text-center">
+              <${mediaTag} ${controls} class="max-w-full ${isVideo ? 'max-h-96' : ''} mx-auto rounded-lg shadow-lg">
+                <source src="data:${fileType};base64,${fileData}" type="${fileType}">
+                متصفحك لا يدعم تشغيل هذا النوع من الملفات.
+              </${mediaTag}>
+            </div>
+            <div class="mt-4 text-center">
+              <button onclick="downloadFile('${fileId}', '${fileName}')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                💾 تحميل الملف
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        modal.onclick = (e) => {
+          if (e.target === modal) closeModal();
+        };
+      } catch (error) {
+        console.error('خطأ في تشغيل الملف:', error);
+        showNotification('فشل في تشغيل الملف', 'error');
       }
     }
 
@@ -1184,6 +2062,13 @@
     window.switchGroup = switchGroup;
     window.deleteGroup = deleteGroup;
     window.toggleSidebar = toggleSidebar;
+    window.requestNotificationPermission = requestNotificationPermission;
+    window.triggerFileUpload = triggerFileUpload;
+    window.handleFileSelect = handleFileSelect;
+    window.cancelUpload = cancelUpload;
+    window.downloadFile = downloadFile;
+    window.previewFile = previewFile;
+    window.playMediaFile = playMediaFile;
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'998da9910561e238',t:'MTc2MjE5MTY4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9993829e75b11858',t:'MTc2MjI1MzAwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
