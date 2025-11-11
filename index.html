@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
  <head>
   <meta charset="UTF-8">
+  <link rel="shortcut icon" href="logo_mohamed_and_mariam.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>💕 محمد ومريم - شات الحب 💕</title>
   <style>
@@ -533,6 +534,11 @@
                 height: 100vh;
             }
         }
+        img{
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
@@ -543,6 +549,9 @@
    <div class="login-screen" id="loginScreen">
     <div class="login-header">
      <h1>💕 شات الحب 💕</h1>
+     <br>
+     <img src="logo_mohamed_and_mariam.ico" alt="logo_mohamed_and_mariam" height="150" width="150">
+     <br>
      <p>اختر حسابك للدخول</p>
     </div>
     <div class="user-selection">
@@ -554,7 +563,7 @@
       <h2>مريم</h2>
       <p>دخول مباشر بدون كلمة سر</p>
      </div>
-    </div><input type="password" id="passwordInput" class="password-input" placeholder="أدخل كلمة السر"> <button class="login-btn" id="loginBtn" onclick="login()"> دخول 💖 </button>
+    </div><input type="password" id="passwordInput" class="password-input" placeholder="أدخل كلمة السر"> <button class="login-btn" id="loginBtn" onclick="login()"> دخول 💖 </button> <button class="login-btn" onclick="downloadApp()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 15px;"> 📱 تنزيل التطبيق للتواصل الأفضل </button>
     <p class="error-message" id="errorMessage">كلمة السر غير صحيحة!</p>
    </div><!-- Chat Screen -->
    <div class="chat-screen" id="chatScreen">
@@ -565,7 +574,7 @@
      <div class="chat-info">
       <h2 id="headerName">محمد</h2>
       <p id="headerStatus">آخر ظهور: الآن</p>
-     </div><button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="logout()">خروج</button>
+     </div><button class="logout-btn" onclick="downloadApp()">📱</button> <button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="logout()">خروج</button>
     </div>
     <div class="messages-container" id="messagesContainer">
      <div class="empty-state">
@@ -593,7 +602,7 @@
      <div style="display: flex; gap: 10px; margin-bottom: 10px;"><input type="text" id="profileImageUrl" placeholder="رابط الصورة (اختياري)" style="flex: 1;"> <button type="button" class="attach-btn" onclick="document.getElementById('profileImageInput').click()" style="padding: 10px 15px;"> 📷 رفع </button>
      </div><input type="file" id="profileImageInput" accept="image/*" onchange="handleProfileImageUpload(event)" style="display: none;">
      <div id="profileImagePreview" style="display: none; margin-top: 10px;"><img id="profileImagePreviewImg" src="" alt="معاينة" style="max-width: 100px; max-height: 100px; border-radius: 50%; border: 3px solid #ff6b9d;">
-     </div><button class="save-btn" onclick="saveProfile()"> حفظ التغييرات 💾 </button>
+     </div><button class="save-btn" onclick="saveProfile()"> حفظ التغييرات 💾 </button> <button class="save-btn" id="notificationBtn" onclick="enableNotifications()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 🔔 تفعيل الإشعارات </button>
      <div id="adminControls" style="display: none;">
       <hr style="margin: 20px 0;">
       <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 صلاحيات المسؤول</h3><button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%);"> تعديل بروفيل مريم 👩 </button> <button class="save-btn" onclick="clearAllMessages()" style="background: #e53e3e; margin-top: 10px;"> حذف جميع الرسائل 🗑️ </button>
@@ -624,7 +633,7 @@
                     emoji: '',
                     status: 'متصل الآن',
                     lastSeen: new Date().toISOString(),
-                    imageUrl: 'https://scontent.fcai19-7.fna.fbcdn.net/v/t39.30808-6/515439941_122146277504855091_3972673970746458334_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FYt_PqoQ_JwQ7kNvwEadkfI&_nc_oc=AdkVPjAkycYEPgzdwL3B4Rn2VO9Cj65IBU3B39ln7yuXX-Qi3KjXIJZVu0CpDQI8m0w&_nc_zt=23&_nc_ht=scontent.fcai19-7.fna&_nc_gid=UtY3NSyENOUh-kqdGSAlag&oh=00_Afh6sZIwZqORUskp37ARLKWB9uu2qQ3A1loZfr0dMv8_PA&oe=69184845',
+                    imageUrl: 'https://scontent.fcai19-7.fna.fbcdn.net/v/t39.30808-6/515439941_122114576424334_7906825109076991_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FYt_PqoQ_JwQ7kNvwEadkfI&_nc_oc=AdkVPjAkycYEPgzdwL3B4Rn2VO9Cj65IBU3B39ln7yuXX-Qi3KjXIJZVu0CpDQI8m0w&_nc_zt=23&_nc_ht=scontent.fcai19-7.fna&_nc_gid=GoqDoIaQ0CtdsRjePdVzVQ&oh=00_AfgIyyRx__A67S4-dTYjxotgGDc_TPZ-hMg4b50QLB5feA&oe=69184845',
                     imageData: ''
                 },
                 mariam: {
@@ -1124,6 +1133,9 @@
                 document.getElementById('adminControls').style.display = 'none';
             }
 
+            // Update notification button status
+            updateNotificationButton();
+
             document.getElementById('profileModal').classList.add('show');
         }
 
@@ -1229,8 +1241,181 @@
             }, 3000);
         }
 
+        // Download App
+        async function downloadApp() {
+            try {
+                showToast('جاري تحضير التطبيق... 📱');
+                
+                // Fetch the APK file from JSONBin
+                const response = await fetch(JSONBIN_URL + '/latest', {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': JSONBIN_API_KEY,
+                        'X-Bin-Meta': 'false'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Check if APK data exists
+                    if (data.record && data.record.apkFile) {
+                        // Create download link
+                        const link = document.createElement('a');
+                        link.href = data.record.apkFile;
+                        link.download = 'chat.apk';
+                        link.click();
+                        
+                        showToast('تم بدء التنزيل! 📥');
+                    } else {
+                        // If no APK in JSONBin, show instructions
+                        showToast('⚠️ لتنزيل التطبيق، قم برفع ملف chat.apk إلى JSONBin أولاً');
+                        
+                        // Show instructions in a custom modal
+                        const instructions = `
+                            📱 لتفعيل تنزيل التطبيق:
+                            
+                            1. قم برفع ملف chat.apk إلى خدمة استضافة
+                            2. احصل على رابط مباشر للملف
+                            3. أضف الرابط إلى JSONBin في حقل "apkFile"
+                            
+                            مثال:
+                            {
+                              "apkFile": "https://example.com/chat.apk",
+                              "messages": [...],
+                              "profiles": {...}
+                            }
+                        `;
+                        
+                        alert(instructions);
+                    }
+                } else {
+                    showToast('حدث خطأ في الاتصال ❌');
+                }
+            } catch (error) {
+                console.error('خطأ في التنزيل:', error);
+                showToast('حدث خطأ في التنزيل ❌');
+            }
+        }
+
+        // Enable Notifications
+        async function enableNotifications() {
+            const notificationBtn = document.getElementById('notificationBtn');
+            
+            // Check if notifications are supported
+            if (!('Notification' in window)) {
+                showToast('المتصفح لا يدعم الإشعارات ❌');
+                return;
+            }
+
+            try {
+                // Request permission
+                const permission = await Notification.requestPermission();
+                
+                if (permission === 'granted') {
+                    // Save notification preference to JSONBin
+                    if (!allData.notificationSettings) {
+                        allData.notificationSettings = {};
+                    }
+                    
+                    allData.notificationSettings[currentUser] = {
+                        enabled: true,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    await saveData();
+                    
+                    // Update button
+                    notificationBtn.textContent = '✅ الإشعارات مفعلة';
+                    notificationBtn.style.background = 'linear-gradient(135deg, #888 0%, #666 100%)';
+                    notificationBtn.disabled = true;
+                    
+                    // Show test notification
+                    new Notification('💕 شات الحب', {
+                        body: 'تم تفعيل الإشعارات بنجاح!',
+                        icon: '💕',
+                        badge: '💕'
+                    });
+                    
+                    showToast('تم تفعيل الإشعارات ✅');
+                    
+                    // Start monitoring for new messages
+                    startNotificationMonitoring();
+                } else if (permission === 'denied') {
+                    showToast('تم رفض الإشعارات. يرجى تفعيلها من إعدادات المتصفح ⚠️');
+                } else {
+                    showToast('لم يتم تفعيل الإشعارات');
+                }
+            } catch (error) {
+                console.error('خطأ في تفعيل الإشعارات:', error);
+                showToast('حدث خطأ في تفعيل الإشعارات ❌');
+            }
+        }
+
+        // Start Notification Monitoring
+        let lastMessageCount = 0;
+        let notificationInterval = null;
+
+        function startNotificationMonitoring() {
+            if (notificationInterval) return; // Already monitoring
+            
+            lastMessageCount = allData.messages.length;
+            
+            notificationInterval = setInterval(async () => {
+                // Check if user has notifications enabled
+                if (!allData.notificationSettings || !allData.notificationSettings[currentUser]?.enabled) {
+                    return;
+                }
+                
+                // Load latest data
+                await loadData();
+                
+                // Check for new messages
+                if (allData.messages.length > lastMessageCount) {
+                    const newMessages = allData.messages.slice(lastMessageCount);
+                    
+                    // Show notification for each new message from other user
+                    newMessages.forEach(msg => {
+                        if (msg.sender !== currentUser) {
+                            const senderProfile = allData.profiles[msg.sender];
+                            
+                            new Notification(`💕 رسالة جديدة من ${senderProfile.name}`, {
+                                body: msg.text || '📎 مرفق',
+                                icon: '💕',
+                                badge: '💕',
+                                tag: msg.id,
+                                requireInteraction: false
+                            });
+                        }
+                    });
+                    
+                    lastMessageCount = allData.messages.length;
+                }
+            }, 5000); // Check every 5 seconds
+        }
+
+        // Check notification status on modal open
+        function updateNotificationButton() {
+            const notificationBtn = document.getElementById('notificationBtn');
+            
+            if (Notification.permission === 'granted') {
+                if (allData.notificationSettings && allData.notificationSettings[currentUser]?.enabled) {
+                    notificationBtn.textContent = '✅ الإشعارات مفعلة';
+                    notificationBtn.style.background = 'linear-gradient(135deg, #888 0%, #666 100%)';
+                    notificationBtn.disabled = true;
+                    
+                    // Start monitoring if not already started
+                    startNotificationMonitoring();
+                }
+            } else if (Notification.permission === 'denied') {
+                notificationBtn.textContent = '❌ الإشعارات محظورة';
+                notificationBtn.style.background = 'linear-gradient(135deg, #e53e3e 0%, #c62828 100%)';
+                notificationBtn.disabled = true;
+            }
+        }
+
         // Initialize
         initApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99c9aec7b47512b5',t:'MTc2MjgyMTA0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99c9d0fea221e201',t:'MTc2MjgyMjQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
