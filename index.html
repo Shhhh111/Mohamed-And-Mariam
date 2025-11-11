@@ -1245,59 +1245,12 @@
         async function downloadApp() {
             try {
                 showToast('جاري تحضير التطبيق... 📱');
-                
-                // Fetch the APK file from JSONBin
-                const response = await fetch(JSONBIN_URL + '/latest', {
-                    method: 'GET',
-                    headers: {
-                        'X-Master-Key': JSONBIN_API_KEY,
-                        'X-Bin-Meta': 'false'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Check if APK data exists
-                    if (data.record && data.record.apkFile) {
-                        // Create download link
-                        const link = document.createElement('a');
-                        link.href = data.record.apkFile;
-                        link.download = 'chat.apk';
-                        link.click();
-                        
-                        showToast('تم بدء التنزيل! 📥');
-                    } else {
-                        // If no APK in JSONBin, show instructions
-                        showToast('⚠️ لتنزيل التطبيق، قم برفع ملف chat.apk إلى JSONBin أولاً');
-                        
-                        // Show instructions in a custom modal
-                        const instructions = `
-                            📱 لتفعيل تنزيل التطبيق:
-                            
-                            1. قم برفع ملف chat.apk إلى خدمة استضافة
-                            2. احصل على رابط مباشر للملف
-                            3. أضف الرابط إلى JSONBin في حقل "apkFile"
-                            
-                            مثال:
-                            {
-                              "apkFile": "https://example.com/chat.apk",
-                              "messages": [...],
-                              "profiles": {...}
-                            }
-                        `;
-                        
-                        alert(instructions);
-                    }
-                } else {
-                    showToast('حدث خطأ في الاتصال ❌');
-                }
+                window.open("https://drive.google.com/file/d/144QjVs3ESxcC884nbzbb_MOSf5f_5Ba9/view?usp=sharing", "blank")
             } catch (error) {
-                console.error('خطأ في التنزيل:', error);
-                showToast('حدث خطأ في التنزيل ❌');
+                console.error('خطأ في تنزيل التطبيق:', error);
+                showToast('حدث خطأ في تنزيل التطبيق ❌');
             }
         }
-
         // Enable Notifications
         async function enableNotifications() {
             const notificationBtn = document.getElementById('notificationBtn');
