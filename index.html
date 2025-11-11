@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
  <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="logo_mohamed_and_mariam.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>💕 محمد ومريم - شات الحب 💕</title>
   <style>
@@ -15,7 +14,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 50%, #6c5b7b 100%);
-            min-height: 100vh;
+            min-height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -149,8 +148,8 @@
         /* Chat Screen */
         .chat-screen {
             display: none;
-            height: 100vh;
-            max-height: 100vh;
+            height: 100%;
+            max-height: 100%;
         }
 
         .chat-screen.active {
@@ -439,7 +438,7 @@
             border-radius: 20px;
             max-width: 400px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 80%;
             overflow-y: auto;
         }
 
@@ -527,11 +526,154 @@
             display: none;
         }
 
+        /* Music Player Sidebar */
+        .music-sidebar {
+            position: fixed;
+            left: -400px;
+            top: 0;
+            width: 400px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.3);
+            transition: left 0.3s ease;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .music-sidebar.show {
+            left: 0;
+        }
+
+        .music-header {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .music-header h2 {
+            font-size: 20px;
+        }
+
+        .close-music {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        .music-iframe-container {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .music-iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .music-controls {
+            background: #f5f5f5;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .now-playing {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .now-playing h3 {
+            color: #ff6b9d;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .now-playing p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .music-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2999;
+        }
+
+        .music-overlay.show {
+            display: block;
+        }
+
+        .music-notification {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 2000;
+            animation: slideUp 0.3s ease;
+            max-width: 300px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .music-notification.show {
+            display: block;
+        }
+
+        .music-notification h4 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .music-notification p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
         @media (max-width: 768px) {
             .container {
                 max-width: 100%;
                 border-radius: 0;
-                height: 100vh;
+                height: 100%;
+            }
+
+            .music-sidebar {
+                width: 100%;
+                left: -100%;
+            }
+
+            .music-sidebar.show {
+                left: 0;
             }
         }
         img{
@@ -574,7 +716,7 @@
      <div class="chat-info">
       <h2 id="headerName">محمد</h2>
       <p id="headerStatus">آخر ظهور: الآن</p>
-     </div><button class="logout-btn" onclick="downloadApp()">📱</button> <button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="logout()">خروج</button>
+     </div><button class="logout-btn" onclick="downloadApp()">📱</button> <button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="emergencyExit()" style="background: #e53e3e;">🚨 خروج فوري</button> <button class="logout-btn" onclick="logout()">خروج</button>
     </div>
     <div class="messages-container" id="messagesContainer">
      <div class="empty-state">
@@ -588,7 +730,7 @@
      </div>
      <div class="input-controls"><button class="attach-btn" onclick="document.getElementById('imageInput').click()"> 📷 </button> <button class="attach-btn" onclick="document.getElementById('cameraInput').click()"> 📸 </button> <button class="attach-btn" onclick="document.getElementById('fileInput').click()"> 📎 </button> <button class="attach-btn" onclick="document.getElementById('videoInput').click()"> 🎥 </button>
      </div>
-     <form class="message-form" id="messageForm"><input type="text" class="message-input" id="messageInput" placeholder="اكتب رسالة حب..." required> <button type="submit" class="send-btn" id="sendBtn"> 💕 </button>
+     <form class="message-form" id="messageForm"><textarea class="message-input" id="messageInput" placeholder="اكتب رسالة حب... (Shift+Enter للسطر الجديد)" required rows="1" style="resize: none; overflow-y: auto; max-height: 150px; line-height: 1.5;"></textarea> <button type="submit" class="send-btn" id="sendBtn"> 💕 </button>
      </form><input type="file" id="imageInput" accept="image/*" onchange="handleFileSelect(event, 'image')"> <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileSelect(event, 'camera')"> <input type="file" id="fileInput" onchange="handleFileSelect(event, 'file')"> <input type="file" id="videoInput" accept="video/*" onchange="handleFileSelect(event, 'video')">
     </div>
    </div>
@@ -605,12 +747,30 @@
      </div><button class="save-btn" onclick="saveProfile()"> حفظ التغييرات 💾 </button> <button class="save-btn" id="notificationBtn" onclick="enableNotifications()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 🔔 تفعيل الإشعارات </button>
      <div id="adminControls" style="display: none;">
       <hr style="margin: 20px 0;">
-      <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 صلاحيات المسؤول</h3><button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%);"> تعديل بروفيل مريم 👩 </button> <button class="save-btn" onclick="clearAllMessages()" style="background: #e53e3e; margin-top: 10px;"> حذف جميع الرسائل 🗑️ </button>
+      <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 لوحة التحكم الكاملة</h3><button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%);"> 👩 تعديل بروفيل مريم </button> <button class="save-btn" onclick="changeMariamPassword()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 10px;"> 🔐 تغيير كلمة سر مريم </button> <button class="save-btn" onclick="changeAdminPassword()" style="background: linear-gradient(135deg, #355c7d 0%, #2c3e50 100%); margin-top: 10px;"> 🔑 تغيير كلمة سر المسؤول </button> <button class="save-btn" onclick="changePlaylistUrl()" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); margin-top: 10px;"> 🎵 تغيير رابط قائمة الأغاني </button> <button class="save-btn" onclick="exportAllData()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 💾 تصدير جميع البيانات </button> <button class="save-btn" onclick="clearAllMessages()" style="background: #e53e3e; margin-top: 10px;"> 🗑️ حذف جميع الرسائل </button> <button class="save-btn" onclick="resetAllData()" style="background: #d32f2f; margin-top: 10px;"> ⚠️ إعادة تعيين كل شيء </button>
      </div>
     </div>
    </div>
   </div><!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div><!-- Music Player Sidebar -->
+  <div class="music-overlay" id="musicOverlay" onclick="closeMusicPlayer()"></div>
+  <div class="music-sidebar" id="musicSidebar">
+   <div class="music-header">
+    <h2>🎵 قائمة الأغاني</h2><button class="close-music" onclick="closeMusicPlayer()">×</button>
+   </div>
+   <div class="music-iframe-container"><iframe id="musicIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe>
+   </div>
+   <div class="music-controls">
+    <div class="now-playing" id="nowPlaying" style="display: none;">
+     <h3>🎵 الآن يتم التشغيل</h3>
+     <p id="currentSongTitle">لا توجد أغنية</p>
+    </div>
+   </div>
+  </div><!-- Music Notification -->
+  <div class="music-notification" id="musicNotification">
+   <h4>🎵 يتم تشغيل أغنية</h4>
+   <p id="musicNotificationText">جاري التحميل...</p>
+  </div>
   <script>
         // JSONBin Configuration
         const JSONBIN_API_KEY = '$2a$10$EVEgnKcuZEoujGa1B3HQmuU7C3Eh6NfJFdYR9IH0r1mQR3UAc2SU2';
@@ -625,33 +785,34 @@
         let selectedLoginUser = null;
         let currentAttachment = null;
         let isLoading = false;
-        let allData = {
-            messages: [],
-            profiles: {
-                mohamed: {
-                    name: 'محمد',
-                    emoji: '',
-                    status: 'متصل الآن',
-                    lastSeen: new Date().toISOString(),
-                    imageUrl: 'https://scontent.fcai19-7.fna.fbcdn.net/v/t39.30808-6/515439941_122114576424334_7906825109076991_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FYt_PqoQ_JwQ7kNvwEadkfI&_nc_oc=AdkVPjAkycYEPgzdwL3B4Rn2VO9Cj65IBU3B39ln7yuXX-Qi3KjXIJZVu0CpDQI8m0w&_nc_zt=23&_nc_ht=scontent.fcai19-7.fna&_nc_gid=GoqDoIaQ0CtdsRjePdVzVQ&oh=00_AfgIyyRx__A67S4-dTYjxotgGDc_TPZ-hMg4b50QLB5feA&oe=69184845',
-                    imageData: ''
+         allData = {
+                messages: [],
+                profiles: {
+                    mohamed: {
+                        name: 'محمد',
+                        emoji: '',
+                        status: 'متصل الآن',
+                        lastSeen: new Date().toISOString(),
+                        imageUrl: 'https://scontent.fcai19-7.fna.fbcdn.net/v/t39.30808-6/515439941_122146277504855091_3972673970746458334_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FYt_PqoQ_JwQ7kNvwFH7-L5&_nc_oc=AdlMx394HWZkfp0ZYFpCOJQtjnCvp9ts-kPTNV-S27N05efVn2BUX4rQG4P6RSSTvJc&_nc_zt=23&_nc_ht=scontent.fcai19-7.fna&_nc_gid=Qv_ctGwsGRfSMnerWmsHPw&oh=00_AfiIa5Us7tZd0rVeru2Vo_Wa9vuXxzVO1ffr9l5HGi-0bQ&oe=69192945',
+                        imageData: ''
+                    },
+                    mariam: {
+                        name: 'مريم',
+                        emoji: '',
+                        status: 'متصلة الآن',
+                        lastSeen: new Date().toISOString(),
+                        imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.A4Tr3kMRtXm2vd69CD7NAgHaEJ?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3',
+                        imageData: ''
+                    }
                 },
-                mariam: {
-                    name: 'مريم',
-                    emoji: '',
-                    status: 'متصلة الآن',
-                    lastSeen: new Date().toISOString(),
-                    imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.A4Tr3kMRtXm2vd69CD7NAgHaEJ?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3',
-                    imageData: ''
-                }
-            }
-        };
+                passwords: {},
+                notificationSettings: {}
+            };
 
         // Initialize App
         async function initApp() {
             console.log('🚀 بدء تحميل التطبيق...');
             
-            // Load data first
             const loaded = await loadData();
             
             if (!loaded) {
@@ -659,7 +820,6 @@
                 showToast('تحذير: لم يتم الاتصال بالخادم. استخدام البيانات المحلية.');
             }
 
-            // Check for auto-login
             const savedUser = localStorage.getItem('lastLoggedInUser');
             if (savedUser) {
                 try {
@@ -701,6 +861,15 @@
                         allData = data.record;
                     } else if (data.messages !== undefined) {
                         allData = data;
+                    }
+
+                    // Ensure musicPlayer exists
+                    if (!allData.musicPlayer) {
+                        allData.musicPlayer = {
+                            playlistUrl: 'https://www.youtube.com/watch?v=YQ7SxFTZJW4&list=RDMMYQ7SxFTZJW4&index=1',
+                            currentSong: null,
+                            isPlaying: false
+                        };
                     }
                     
                     if (currentUser) {
@@ -765,7 +934,11 @@
             const passwordInput = document.getElementById('passwordInput');
             const errorMessage = document.getElementById('errorMessage');
 
-            if (user === 'mohamed') {
+            const storedPassword = allData.passwords?.[user];
+            const defaultPassword = user === 'mohamed' ? ADMIN_PASSWORD : null;
+            const requiresPassword = storedPassword || defaultPassword;
+
+            if (requiresPassword) {
                 passwordInput.classList.add('show');
                 passwordInput.focus();
             } else {
@@ -783,10 +956,15 @@
             }
 
             const errorMessage = document.getElementById('errorMessage');
+            const passwordInput = document.getElementById('passwordInput');
 
-            if (selectedLoginUser === 'mohamed') {
-                const password = document.getElementById('passwordInput').value;
-                if (password !== ADMIN_PASSWORD) {
+            const storedPassword = allData.passwords?.[selectedLoginUser];
+            const defaultPassword = selectedLoginUser === 'mohamed' ? ADMIN_PASSWORD : null;
+            const requiredPassword = storedPassword || defaultPassword;
+
+            if (requiredPassword) {
+                const enteredPassword = passwordInput.value;
+                if (enteredPassword !== requiredPassword) {
                     errorMessage.classList.add('show');
                     return;
                 }
@@ -794,13 +972,11 @@
 
             currentUser = selectedLoginUser;
 
-            // Save last login
             localStorage.setItem('lastLoggedInUser', JSON.stringify({
                 user: currentUser,
                 timestamp: new Date().toISOString()
             }));
 
-            // Update last seen
             allData.profiles[currentUser].lastSeen = new Date().toISOString();
             saveData();
 
@@ -831,7 +1007,6 @@
             updateHeader();
             renderMessages();
             
-            // Auto-refresh messages every 3 seconds
             setInterval(loadData, 3000);
         }
 
@@ -842,7 +1017,6 @@
 
             const headerPic = document.getElementById('headerProfilePic');
             
-            // Check if there's an image (either uploaded or URL)
             const imageSource = profile.imageData || profile.imageUrl;
             if (imageSource) {
                 headerPic.innerHTML = `<img src="${imageSource}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.textContent='${profile.emoji}';">`;
@@ -873,8 +1047,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // Check file size (max 10MB for better performance)
-            const maxSize = 10 * 1024 * 1024; // 10MB
+            const maxSize = 10 * 1024 * 1024;
             if (file.size > maxSize) {
                 showToast('حجم الملف كبير جداً! الحد الأقصى 10 ميجابايت');
                 event.target.value = '';
@@ -937,6 +1110,13 @@
             const text = messageInput.value.trim();
 
             if (!text && !currentAttachment) return;
+
+            // Check for /listplay command (Mohamed only)
+            if (text === '/listplay' && currentUser === 'mohamed') {
+                openMusicPlayer();
+                messageInput.value = '';
+                return;
+            }
 
             const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
@@ -1005,12 +1185,14 @@
                     }
                 }
 
-                // Only Mohamed can delete and edit messages
-                const deleteBtn = currentUser === 'mohamed' 
+                const canEdit = (currentUser === 'mohamed') || (currentUser === msg.sender);
+                const canDelete = (currentUser === 'mohamed') || (currentUser === msg.sender);
+                
+                const deleteBtn = canDelete 
                     ? `<button class="delete-btn" onclick="deleteMessage('${msg.id}')">حذف</button>` 
                     : '';
 
-                const editBtn = currentUser === 'mohamed' 
+                const editBtn = canEdit 
                     ? `<button class="delete-btn" onclick="editMessage('${msg.id}')">تعديل</button>` 
                     : '';
 
@@ -1032,18 +1214,18 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // Edit Message (Mohamed only)
+        // Edit Message
         async function editMessage(messageId) {
-            if (currentUser !== 'mohamed') {
-                showToast('غير مسموح! محمد فقط يمكنه التعديل ❌');
-                return;
-            }
-
             const message = allData.messages.find(msg => msg.id === messageId);
             if (!message) return;
 
+            if (currentUser !== 'mohamed' && currentUser !== message.sender) {
+                showToast('غير مسموح! يمكنك تعديل رسائلك فقط ❌');
+                return;
+            }
+
             const newText = prompt('تعديل الرسالة:', message.text);
-            if (newText === null) return; // User cancelled
+            if (newText === null) return;
             
             if (newText.trim() === '') {
                 showToast('لا يمكن أن تكون الرسالة فارغة');
@@ -1061,10 +1243,13 @@
             }
         }
 
-        // Delete Message (Mohamed only)
+        // Delete Message
         async function deleteMessage(messageId) {
-            if (currentUser !== 'mohamed') {
-                showToast('غير مسموح! محمد فقط يمكنه الحذف ❌');
+            const message = allData.messages.find(msg => msg.id === messageId);
+            if (!message) return;
+
+            if (currentUser !== 'mohamed' && currentUser !== message.sender) {
+                showToast('غير مسموح! يمكنك حذف رسائلك فقط ❌');
                 return;
             }
 
@@ -1097,11 +1282,9 @@
             reader.onload = function(e) {
                 const imageData = e.target.result;
                 
-                // Show preview
                 document.getElementById('profileImagePreviewImg').src = imageData;
                 document.getElementById('profileImagePreview').style.display = 'block';
                 
-                // Store temporarily
                 document.getElementById('profileImageUrl').value = '';
                 document.getElementById('profileImageUrl').dataset.uploadedImage = imageData;
                 
@@ -1118,7 +1301,6 @@
             document.getElementById('profileEmoji').value = profile.emoji;
             document.getElementById('profileImageUrl').value = profile.imageUrl || '';
             
-            // Show current image preview
             const imageSource = profile.imageData || profile.imageUrl;
             if (imageSource) {
                 document.getElementById('profileImagePreviewImg').src = imageSource;
@@ -1133,7 +1315,6 @@
                 document.getElementById('adminControls').style.display = 'none';
             }
 
-            // Update notification button status
             updateNotificationButton();
 
             document.getElementById('profileModal').classList.add('show');
@@ -1158,7 +1339,6 @@
                 return;
             }
 
-            // Show loading state
             const saveBtn = event.target;
             const originalText = saveBtn.textContent;
             saveBtn.disabled = true;
@@ -1169,7 +1349,6 @@
                 allData.profiles[currentUser].status = status;
                 allData.profiles[currentUser].emoji = emoji;
                 
-                // Save image - priority to uploaded image (Base64), then URL
                 if (uploadedImage) {
                     allData.profiles[currentUser].imageData = uploadedImage;
                     allData.profiles[currentUser].imageUrl = '';
@@ -1184,7 +1363,6 @@
                     updateHeader();
                     closeProfileModal();
                     
-                    // Clear temporary data
                     delete imageUrlInput.dataset.uploadedImage;
                     
                     showToast('تم حفظ التغييرات ✅');
@@ -1201,33 +1379,204 @@
         }
 
         // Edit Mariam Profile (Admin Only)
-        function editMariamProfile() {
+        async function editMariamProfile() {
             if (currentUser !== 'mohamed') return;
 
             const profile = allData.profiles.mariam;
             const name = prompt('اسم مريم:', profile.name);
             const emoji = prompt('رمز مريم:', profile.emoji);
             const status = prompt('حالة مريم:', profile.status);
+            const imageUrl = prompt('رابط صورة مريم (اختياري):', profile.imageUrl || '');
 
             if (name) allData.profiles.mariam.name = name;
             if (emoji) allData.profiles.mariam.emoji = emoji;
             if (status) allData.profiles.mariam.status = status;
+            if (imageUrl !== null) allData.profiles.mariam.imageUrl = imageUrl;
 
-            saveData();
+            await saveData();
+            updateHeader();
             showToast('تم تعديل بروفيل مريم ✅');
+        }
+
+        // Change Mariam Password (Admin Only)
+        async function changeMariamPassword() {
+            if (currentUser !== 'mohamed') return;
+
+            const newPassword = prompt('أدخل كلمة السر الجديدة لمريم:\n(اتركها فارغة لإزالة كلمة السر)');
+            if (newPassword === null) return;
+
+            if (!allData.passwords) {
+                allData.passwords = {};
+            }
+
+            if (newPassword.trim() === '') {
+                delete allData.passwords.mariam;
+                showToast('تم إزالة كلمة سر مريم ✅');
+            } else {
+                allData.passwords.mariam = newPassword.trim();
+                showToast('تم تغيير كلمة سر مريم ✅');
+            }
+
+            await saveData();
+        }
+
+        // Change Admin Password (Admin Only)
+        async function changeAdminPassword() {
+            if (currentUser !== 'mohamed') return;
+
+            const currentPassword = prompt('أدخل كلمة السر الحالية:');
+            if (currentPassword !== ADMIN_PASSWORD && currentPassword !== (allData.passwords?.mohamed || ADMIN_PASSWORD)) {
+                showToast('كلمة السر الحالية غير صحيحة ❌');
+                return;
+            }
+
+            const newPassword = prompt('أدخل كلمة السر الجديدة:');
+            if (!newPassword || newPassword.trim() === '') {
+                showToast('كلمة السر لا يمكن أن تكون فارغة ❌');
+                return;
+            }
+
+            const confirmPassword = prompt('أعد إدخال كلمة السر الجديدة:');
+            if (newPassword !== confirmPassword) {
+                showToast('كلمات السر غير متطابقة ❌');
+                return;
+            }
+
+            if (!allData.passwords) {
+                allData.passwords = {};
+            }
+
+            allData.passwords.mohamed = newPassword.trim();
+            await saveData();
+            showToast('تم تغيير كلمة سر المسؤول ✅\nسيتم تطبيقها في المرة القادمة');
+        }
+
+        // Change Playlist URL (Admin Only)
+        async function changePlaylistUrl() {
+            if (currentUser !== 'mohamed') return;
+
+            const currentUrl = allData.musicPlayer?.playlistUrl || '';
+            const newUrl = prompt('أدخل رابط قائمة الأغاني الجديد من YouTube:', currentUrl);
+            
+            if (newUrl === null) return;
+            
+            if (newUrl.trim() === '') {
+                showToast('الرابط لا يمكن أن يكون فارغاً ❌');
+                return;
+            }
+
+            if (!allData.musicPlayer) {
+                allData.musicPlayer = {};
+            }
+
+            allData.musicPlayer.playlistUrl = newUrl.trim();
+            await saveData();
+            showToast('تم تغيير رابط قائمة الأغاني ✅');
+        }
+
+        // Export All Data (Admin Only)
+        function exportAllData() {
+            if (currentUser !== 'mohamed') return;
+
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `chat-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('تم تصدير البيانات ✅');
         }
 
         // Clear All Messages (Admin Only)
         async function clearAllMessages() {
             if (currentUser !== 'mohamed') return;
 
-            const confirmDelete = confirm('هل أنت متأكد من حذف جميع الرسائل؟');
-            if (!confirmDelete) return;
+            const confirmDelete = prompt('اكتب "حذف" للتأكيد:');
+            if (confirmDelete !== 'حذف') {
+                showToast('تم الإلغاء');
+                return;
+            }
 
             allData.messages = [];
             await saveData();
             renderMessages();
             showToast('تم حذف جميع الرسائل ✅');
+        }
+
+        // Reset All Data (Admin Only)
+        async function resetAllData() {
+            if (currentUser !== 'mohamed') return;
+
+            const confirmReset = prompt('⚠️ تحذير: سيتم حذف كل شيء!\nاكتب "إعادة تعيين" للتأكيد:');
+            if (confirmReset !== 'إعادة تعيين') {
+                showToast('تم الإلغاء');
+                return;
+            }
+
+            allData = {
+                messages: [],
+                profiles: {
+                    mohamed: {
+                        name: 'محمد',
+                        emoji: '👨',
+                        status: 'متصل الآن',
+                        lastSeen: new Date().toISOString(),
+                        imageUrl: '',
+                        imageData: ''
+                    },
+                    mariam: {
+                        name: 'مريم',
+                        emoji: '👩',
+                        status: 'متصلة الآن',
+                        lastSeen: new Date().toISOString(),
+                        imageUrl: '',
+                        imageData: ''
+                    }
+                },
+                passwords: {},
+                notificationSettings: {},
+                musicPlayer: {
+                    playlistUrl: 'https://www.youtube.com/watch?v=YQ7SxFTZJW4&list=RDMMYQ7SxFTZJW4&index=1',
+                    currentSong: null,
+                    isPlaying: false
+                }
+            };
+
+            await saveData();
+            renderMessages();
+            updateHeader();
+            showToast('تم إعادة تعيين كل شيء ✅');
+        }
+
+        // Open Music Player (Mohamed Only)
+        function openMusicPlayer() {
+            if (currentUser !== 'mohamed') {
+                showToast('هذه الميزة متاحة لمحمد فقط 🎵');
+                return;
+            }
+
+            const playlistUrl = allData.musicPlayer?.playlistUrl || 'https://www.youtube.com/watch?v=YQ7SxFTZJW4&list=RDMMYQ7SxFTZJW4&index=1';
+            
+            // Convert YouTube URL to embed format
+            let embedUrl = playlistUrl;
+            if (playlistUrl.includes('youtube.com/watch')) {
+                embedUrl = playlistUrl.replace('watch?v=', 'embed/');
+                embedUrl = embedUrl.replace('&list=', '?list=');
+            }
+
+            document.getElementById('musicIframe').src = embedUrl;
+            document.getElementById('musicSidebar').classList.add('show');
+            document.getElementById('musicOverlay').classList.add('show');
+
+            showToast('🎵 قائمة الأغاني مفتوحة!');
+        }
+
+        // Close Music Player
+        function closeMusicPlayer() {
+            document.getElementById('musicSidebar').classList.remove('show');
+            document.getElementById('musicOverlay').classList.remove('show');
         }
 
         // Show Toast
@@ -1251,22 +1600,20 @@
                 showToast('حدث خطأ في تنزيل التطبيق ❌');
             }
         }
+
         // Enable Notifications
         async function enableNotifications() {
             const notificationBtn = document.getElementById('notificationBtn');
             
-            // Check if notifications are supported
             if (!('Notification' in window)) {
                 showToast('المتصفح لا يدعم الإشعارات ❌');
                 return;
             }
 
             try {
-                // Request permission
                 const permission = await Notification.requestPermission();
                 
                 if (permission === 'granted') {
-                    // Save notification preference to JSONBin
                     if (!allData.notificationSettings) {
                         allData.notificationSettings = {};
                     }
@@ -1278,12 +1625,10 @@
                     
                     await saveData();
                     
-                    // Update button
                     notificationBtn.textContent = '✅ الإشعارات مفعلة';
                     notificationBtn.style.background = 'linear-gradient(135deg, #888 0%, #666 100%)';
                     notificationBtn.disabled = true;
                     
-                    // Show test notification
                     new Notification('💕 شات الحب', {
                         body: 'تم تفعيل الإشعارات بنجاح!',
                         icon: '💕',
@@ -1292,7 +1637,6 @@
                     
                     showToast('تم تفعيل الإشعارات ✅');
                     
-                    // Start monitoring for new messages
                     startNotificationMonitoring();
                 } else if (permission === 'denied') {
                     showToast('تم رفض الإشعارات. يرجى تفعيلها من إعدادات المتصفح ⚠️');
@@ -1310,24 +1654,20 @@
         let notificationInterval = null;
 
         function startNotificationMonitoring() {
-            if (notificationInterval) return; // Already monitoring
+            if (notificationInterval) return;
             
             lastMessageCount = allData.messages.length;
             
             notificationInterval = setInterval(async () => {
-                // Check if user has notifications enabled
                 if (!allData.notificationSettings || !allData.notificationSettings[currentUser]?.enabled) {
                     return;
                 }
                 
-                // Load latest data
                 await loadData();
                 
-                // Check for new messages
                 if (allData.messages.length > lastMessageCount) {
                     const newMessages = allData.messages.slice(lastMessageCount);
                     
-                    // Show notification for each new message from other user
                     newMessages.forEach(msg => {
                         if (msg.sender !== currentUser) {
                             const senderProfile = allData.profiles[msg.sender];
@@ -1344,7 +1684,7 @@
                     
                     lastMessageCount = allData.messages.length;
                 }
-            }, 5000); // Check every 5 seconds
+            }, 5000);
         }
 
         // Check notification status on modal open
@@ -1357,7 +1697,6 @@
                     notificationBtn.style.background = 'linear-gradient(135deg, #888 0%, #666 100%)';
                     notificationBtn.disabled = true;
                     
-                    // Start monitoring if not already started
                     startNotificationMonitoring();
                 }
             } else if (Notification.permission === 'denied') {
@@ -1367,8 +1706,51 @@
             }
         }
 
+        // Emergency Exit Function
+        function emergencyExit() {
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            window.close();
+            
+            setTimeout(() => {
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    window.location.href = 'youtube://';
+                    setTimeout(() => {
+                        window.location.href = 'https://m.youtube.com';
+                    }, 500);
+                } else {
+                    window.location.href = 'https://www.youtube.com';
+                }
+            }, 100);
+        }
+
+        // Handle Shift+Enter for new line
+        document.addEventListener('DOMContentLoaded', () => {
+            const messageInput = document.getElementById('messageInput');
+            
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById('messageForm').dispatchEvent(new Event('submit'));
+                } else if (e.key === 'Enter' && e.shiftKey) {
+                    setTimeout(() => {
+                        messageInput.style.height = 'auto';
+                        messageInput.style.height = Math.min(messageInput.scrollHeight, 150) + 'px';
+                    }, 0);
+                }
+            });
+
+            messageInput.addEventListener('input', () => {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 150) + 'px';
+            });
+        });
+
         // Initialize
         initApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99c9d0fea221e201',t:'MTc2MjgyMjQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99d0b875721f12b5',t:'MTc2Mjg5NDg0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
