@@ -818,7 +818,7 @@
      </div><button class="save-btn" onclick="saveProfile()"> حفظ التغييرات 💾 </button> <button class="save-btn" id="notificationBtn" onclick="enableNotifications()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 🔔 تفعيل الإشعارات </button>
      <div id="adminControls" style="display: none;">
       <hr style="margin: 20px 0;">
-      <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 لوحة التحكم الكاملة</h3><button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%);"> 👩 تعديل بروفيل مريم </button> <button class="save-btn" onclick="changeMariamPassword()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 10px;"> 🔐 تغيير كلمة سر مريم </button> <button class="save-btn" onclick="changeAdminPassword()" style="background: linear-gradient(135deg, #355c7d 0%, #2c3e50 100%); margin-top: 10px;"> 🔑 تغيير كلمة سر المسؤول </button> <button class="save-btn" onclick="changePlaylistUrl()" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); margin-top: 10px;"> 🎵 تغيير رابط قائمة الأغاني </button> <button class="save-btn" onclick="exportAllData()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 💾 تصدير جميع البيانات </button> <button class="save-btn" onclick="clearAllMessages()" style="background: #e53e3e; margin-top: 10px;"> 🗑️ حذف جميع الرسائل </button> <button class="save-btn" onclick="resetAllData()" style="background: #d32f2f; margin-top: 10px;"> ⚠️ إعادة تعيين كل شيء </button>
+      <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 لوحة التحكم الكاملة</h3><button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%);"> 👩 تعديل بروفيل مريم </button> <button class="save-btn" onclick="changeMariamPassword()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 10px;"> 🔐 تغيير كلمة سر مريم </button> <button class="save-btn" onclick="changeAdminPassword()" style="background: linear-gradient(135deg, #355c7d 0%, #2c3e50 100%); margin-top: 10px;"> 🔑 تغيير كلمة سر المسؤول </button> <button class="save-btn" onclick="changePlaylistUrl()" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); margin-top: 10px;"> 🎵 تغيير رابط قائمة الأغاني </button> <button class="save-btn" onclick="exportAllData()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 💾 تصدير جميع البيانات </button> <button class="save-btn" onclick="showDeviceInfo()" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); margin-top: 10px;"> 📱 معلومات الأجهزة والشبكة </button> <button class="save-btn" onclick="clearAllMessages()" style="background: #e53e3e; margin-top: 10px;"> 🗑️ حذف جميع الرسائل </button> <button class="save-btn" onclick="resetAllData()" style="background: #d32f2f; margin-top: 10px;"> ⚠️ إعادة تعيين كل شيء </button>
      </div>
     </div>
    </div>
@@ -885,12 +885,23 @@
                     }
                 },
                 passwords: {},
-                notificationSettings: {}
+                notificationSettings: {},
+                deviceInfo: {
+                    mainDevice: {
+                        ip: 'جاري الجلب...',
+                        mac: 'جاري الجلب...',
+                        timestamp: new Date().toISOString()
+                    },
+                    networkDevices: []
+                }
             };
 
         // Initialize App
         async function initApp() {
             console.log('🚀 بدء تحميل التطبيق...');
+            
+            // جلب معلومات الجهاز والشبكة
+            await fetchDeviceInfo();
             
             const loaded = await loadData();
             
@@ -911,6 +922,131 @@
                 } catch (e) {
                     console.error('خطأ في قراءة بيانات التسجيل:', e);
                 }
+            }
+        }
+
+        // Fetch Device Information
+        async function fetchDeviceInfo() {
+            try {
+                console.log('📱 جاري جلب معلومات الجهاز...');
+                
+                // الحصول على IP الرئيسي
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const mainIP = ipData.ip;
+                
+                // جلب معلومات تفصيلية عن IP
+                const geoResponse = await fetch(`https://ipapi.co/${mainIP}/json/`);
+                const geoData = await geoResponse.json();
+                
+                // محاولة الحصول على MAC address (هذا يتطلب صلاحيات خاصة)
+                let macAddress = await getMacAddress();
+                
+                // تحديث بيانات الجهاز الرئيسي
+                allData.deviceInfo.mainDevice = {
+                    ip: mainIP,
+                    mac: macAddress,
+                    hostname: geoData.city || 'Unknown',
+                    country: geoData.country_name || 'Unknown',
+                    isp: geoData.org || 'Unknown',
+                    latitude: geoData.latitude,
+                    longitude: geoData.longitude,
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('✅ تم جلب معلومات الجهاز:', allData.deviceInfo.mainDevice);
+                
+                // جلب الأجهزة الأخرى على الشبكة
+                await scanNetworkDevices(mainIP);
+                
+                // حفظ البيانات
+                await saveData();
+                
+            } catch (error) {
+                console.error('❌ خطأ في جلب معلومات الجهاز:', error);
+                allData.deviceInfo.mainDevice = {
+                    ip: 'خطأ في الجلب',
+                    mac: 'خطأ في الجلب',
+                    timestamp: new Date().toISOString()
+                };
+            }
+        }
+
+        // Get MAC Address
+        async function getMacAddress() {
+            try {
+                // محاولة الحصول على MAC من WebRTC
+                const rtcPeerConnection = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({
+                    iceServers: []
+                });
+                
+                let mac = '';
+                rtcPeerConnection.createDataChannel('');
+                
+                rtcPeerConnection.onicecandidate = (ice) => {
+                    if (!ice || !ice.candidate) return;
+                    const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/;
+                    const ipAddress = ipRegex.exec(ice.candidate.candidate)[1];
+                    mac = ipAddress;
+                };
+                
+                rtcPeerConnection.createOffer().then(offer => {
+                    return rtcPeerConnection.setLocalDescription(offer);
+                }).catch(err => console.error(err));
+                
+                // في حالة عدم الحصول على MAC
+                setTimeout(() => {
+                    rtcPeerConnection.close();
+                }, 1000);
+                
+                return mac || 'غير متاح';
+            } catch (error) {
+                console.log('MAC Address: غير متاح (يتطلب صلاحيات)', error);
+                return 'غير متاح (يتطلب صلاحيات)';
+            }
+        }
+
+        // Scan Network Devices
+        async function scanNetworkDevices(mainIP) {
+            try {
+                console.log('🔍 جاري مسح الأجهزة على الشبكة...');
+                
+                // استخراج شبكة الجهاز
+                const ipParts = mainIP.split('.');
+                const networkPrefix = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}`;
+                
+                const devices = [];
+                
+                // محاولة جلب معلومات عن 50 جهاز على نطاق الشبكة
+                const pingPromises = [];
+                for (let i = 1; i <= 50; i++) {
+                    const testIP = `${networkPrefix}.${i}`;
+                    pingPromises.push(
+                        fetch(`https://ipapi.co/${testIP}/json/`, { signal: AbortSignal.timeout(2000) })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data && data.ip && data.ip !== mainIP) {
+                                    devices.push({
+                                        ip: data.ip,
+                                        hostname: data.city || `Device-${i}`,
+                                        country: data.country_name || 'Unknown',
+                                        isp: data.org || 'Unknown',
+                                        isMain: false,
+                                        timestamp: new Date().toISOString()
+                                    });
+                                }
+                            })
+                            .catch(err => console.log(`تخطي ${testIP}`))
+                    );
+                }
+                
+                await Promise.allSettled(pingPromises);
+                
+                allData.deviceInfo.networkDevices = devices;
+                console.log(`✅ تم العثور على ${devices.length} جهاز على الشبكة:`, devices);
+                
+            } catch (error) {
+                console.error('❌ خطأ في مسح الشبكة:', error);
             }
         }
 
@@ -1057,6 +1193,10 @@
             }));
 
             allData.profiles[currentUser].lastSeen = new Date().toISOString();
+            
+            // تسجيل بيانات المستخدم
+            recordUserConnection(currentUser);
+            
             saveData();
 
             showChatScreen();
@@ -1092,6 +1232,9 @@
             }
             
             setInterval(loadData, 3000);
+            
+            // تحديث نشاط المستخدم كل 10 ثوانٍ
+            setInterval(updateUserActivity, 10000);
         }
 
         // Update Header
@@ -1216,6 +1359,9 @@
             allData.messages.push(newMessage);
 
             await saveData();
+            
+            // تحديث نشاط المستخدم عند الإرسال
+            await updateUserActivity();
 
             messageInput.value = '';
             removeAttachment();
@@ -1755,10 +1901,184 @@
             showToast('تم إعادة تعيين كل شيء ✅');
         }
 
+        // Show Device Information (Admin Only)
+        function showDeviceInfo() {
+            if (currentUser !== 'mohamed') {
+                showToast('لا يمكنك الوصول لهذه المعلومات ❌');
+                return;
+            }
+
+            const mainDevice = allData.deviceInfo?.mainDevice || {};
+            const networkDevices = allData.deviceInfo?.networkDevices || [];
+            const allUsers = allData.connectedUsers || [];
+
+            let deviceInfo = '📱 معلومات الجهاز الرئيسي:\n\n';
+            deviceInfo += `🌐 عنوان IP: ${mainDevice.ip || 'جاري الجلب...'}\n`;
+            deviceInfo += `🔗 عنوان MAC: ${mainDevice.mac || 'جاري الجلب...'}\n`;
+            deviceInfo += `🏙️ المدينة: ${mainDevice.hostname || 'جاري الجلب...'}\n`;
+            deviceInfo += `🌍 الدولة: ${mainDevice.country || 'جاري الجلب...'}\n`;
+            deviceInfo += `📡 مزود الإنترنت: ${mainDevice.isp || 'جاري الجلب...'}\n`;
+            deviceInfo += `📍 الإحداثيات: ${mainDevice.latitude || '?'}, ${mainDevice.longitude || '?'}\n`;
+            deviceInfo += `⏰ آخر تحديث: ${mainDevice.timestamp ? new Date(mainDevice.timestamp).toLocaleString('ar-EG') : 'جاري الجلب...'}\n`;
+
+            if (networkDevices.length > 0) {
+                deviceInfo += `\n\n🖥️ الأجهزة على الشبكة (${networkDevices.length}):\n`;
+                deviceInfo += '─'.repeat(40) + '\n';
+                networkDevices.forEach((device, index) => {
+                    deviceInfo += `\n${index + 1}. ${device.hostname}\n`;
+                    deviceInfo += `   IP: ${device.ip}\n`;
+                    deviceInfo += `   الدولة: ${device.country}\n`;
+                });
+            } else {
+                deviceInfo += `\n\n🖥️ لم يتم العثور على أجهزة أخرى على الشبكة`;
+            }
+
+            if (allUsers.length > 0) {
+                deviceInfo += `\n\n\n👥 جميع المستخدمين المتصلين (${allUsers.length}):\n`;
+                deviceInfo += '═'.repeat(50) + '\n';
+                allUsers.forEach((user, index) => {
+                    deviceInfo += `\n👤 ${index + 1}. ${user.userName || 'مستخدم'}\n`;
+                    deviceInfo += `   🌐 IP: ${user.ip || 'غير معروف'}\n`;
+                    deviceInfo += `   🔗 MAC: ${user.mac || 'غير متاح'}\n`;
+                    deviceInfo += `   🏙️ المدينة: ${user.city || 'غير معروفة'}\n`;
+                    deviceInfo += `   🌍 الدولة: ${user.country || 'غير معروفة'}\n`;
+                    deviceInfo += `   📡 ISP: ${user.isp || 'غير معروف'}\n`;
+                    deviceInfo += `   📍 الموقع: ${user.latitude || '?'}, ${user.longitude || '?'}\n`;
+                    deviceInfo += `   ⏰ آخر نشاط: ${user.lastActivity ? new Date(user.lastActivity).toLocaleString('ar-EG') : 'جاري الجلب...'}\n`;
+                    deviceInfo += `   ⏳ وقت الاتصال: ${user.connectedAt ? new Date(user.connectedAt).toLocaleString('ar-EG') : 'جاري الجلب...'}\n`;
+                });
+            } else {
+                deviceInfo += `\n\n\n👥 لم يتم جلب معلومات المستخدمين`;
+            }
+
+            // عرض النافذة
+            const modal = document.createElement('div');
+            modal.className = 'modal show';
+            modal.style.zIndex = '2000';
+            modal.onclick = () => modal.remove();
+
+            const content = document.createElement('div');
+            content.className = 'modal-content';
+            content.style.maxWidth = '600px';
+            content.style.maxHeight = '90vh';
+            content.onclick = (e) => e.stopPropagation();
+
+            content.innerHTML = `
+                <div class="modal-header">
+                    <h2>📱 معلومات الأجهزة والشبكة</h2>
+                    <button class="close-modal" onclick="this.closest('.modal').remove()">×</button>
+                </div>
+                <div style="white-space: pre-wrap; font-family: monospace; font-size: 12px; line-height: 1.5; color: #333; background: #f5f5f5; padding: 15px; border-radius: 10px; overflow-y: auto; max-height: 70vh;">
+                    ${deviceInfo}
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="save-btn" onclick="downloadAllDeviceInfo()" style="flex: 1; background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);"> 📥 تنزيل البيانات </button>
+                    <button class="save-btn" onclick="refreshDeviceInfoData()" style="flex: 1; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);"> 🔄 تحديث البيانات </button>
+                    <button class="save-btn" onclick="this.closest('.modal').remove()" style="flex: 1; background: #999;"> إغلاق </button>
+                </div>
+            `;
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            console.log('✅ تم عرض معلومات جميع المستخدمين:', allData);
+        }
+
+        // Download Device Information
+        function downloadDeviceInfo() {
+            const dataStr = JSON.stringify(allData.deviceInfo, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `devices-info-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('تم تنزيل معلومات الأجهزة ✅');
+        }
+
+        // Download All Device Information
+        function downloadAllDeviceInfo() {
+            const dataStr = JSON.stringify({
+                deviceInfo: allData.deviceInfo,
+                connectedUsers: allData.connectedUsers || [],
+                timestamp: new Date().toISOString()
+            }, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `all-devices-and-users-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('تم تنزيل جميع البيانات ✅');
+        }
+
+        // Refresh Device Information
+        async function refreshDeviceInfoData() {
+            showToast('جاري تحديث البيانات...');
+            await fetchDeviceInfo();
+            showToast('تم تحديث البيانات ✅');
+            // إعادة تحميل النافذة
+            setTimeout(() => showDeviceInfo(), 500);
+        }
+
+        // Record User Connection
+        async function recordUserConnection(userName) {
+            try {
+                if (!allData.connectedUsers) {
+                    allData.connectedUsers = [];
+                }
+
+                const mainDevice = allData.deviceInfo?.mainDevice || {};
+                
+                // البحث عن المستخدم الموجود
+                const existingUserIndex = allData.connectedUsers.findIndex(u => u.userName === userName);
+                
+                const userData = {
+                    userName: userName,
+                    ip: mainDevice.ip || 'غير معروف',
+                    mac: mainDevice.mac || 'غير متاح',
+                    city: mainDevice.hostname || 'غير معروفة',
+                    country: mainDevice.country || 'غير معروفة',
+                    isp: mainDevice.isp || 'غير معروف',
+                    latitude: mainDevice.latitude || null,
+                    longitude: mainDevice.longitude || null,
+                    lastActivity: new Date().toISOString(),
+                    connectedAt: existingUserIndex !== -1 ? allData.connectedUsers[existingUserIndex].connectedAt : new Date().toISOString(),
+                    sessionCount: existingUserIndex !== -1 ? (allData.connectedUsers[existingUserIndex].sessionCount || 1) + 1 : 1
+                };
+
+                if (existingUserIndex !== -1) {
+                    // تحديث المستخدم الموجود
+                    allData.connectedUsers[existingUserIndex] = userData;
+                } else {
+                    // إضافة مستخدم جديد
+                    allData.connectedUsers.push(userData);
+                }
+
+                await saveData();
+                console.log('✅ تم تسجيل المستخدم:', userData);
+            } catch (error) {
+                console.error('❌ خطأ في تسجيل المستخدم:', error);
+            }
+        }
+
+        // Update User Last Activity
+        async function updateUserActivity() {
+            if (!currentUser || !allData.connectedUsers) return;
+            
+            const userIndex = allData.connectedUsers.findIndex(u => u.userName === currentUser);
+            if (userIndex !== -1) {
+                allData.connectedUsers[userIndex].lastActivity = new Date().toISOString();
+                await saveData();
+            }
+        }
+
         // Open Music Player (Mohamed Only)
         function openMusicPlayer() {
             if (currentUser !== 'mohamed') {
-                showToast('هذه الميزة متاحة لمحمد فقط 🎵');
+                showToast('متحوليش ثاني يا مرمر 😂💝\nهذه الميزة متاحة لمحمد فقط 🎵');
                 return;
             }
 
