@@ -609,11 +609,11 @@
         /* Music Player Sidebar */
         .music-sidebar {
             position: fixed;
-            left: -400px;
+            left: -100%;
             top: 0;
-            width: 400px;
+            width: 100%;
             height: 100%;
-            background: white;
+            background: #212121;
             box-shadow: 2px 0 20px rgba(0,0,0,0.3);
             transition: left 0.3s ease;
             z-index: 3000;
@@ -626,32 +626,44 @@
         }
 
         .music-header {
-            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            background: #1a1a1a;
             color: white;
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #333;
         }
 
         .music-header h2 {
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
         }
 
         .close-music {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-music:hover {
+            background: rgba(255,255,255,0.2);
         }
 
         .music-iframe-container {
             flex: 1;
             overflow: hidden;
+            background: #000;
         }
 
         .music-iframe-container iframe {
@@ -661,28 +673,51 @@
         }
 
         .music-controls {
-            background: #f5f5f5;
+            background: #1a1a1a;
             padding: 15px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .music-control-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .music-control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
         }
 
         .now-playing {
-            background: white;
+            background: rgba(255,255,255,0.05);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
             text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .now-playing h3 {
             color: #ff6b9d;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 5px;
         }
 
         .now-playing p {
-            color: #666;
-            font-size: 14px;
+            color: #aaa;
+            font-size: 12px;
         }
 
         .music-overlay {
@@ -753,6 +788,147 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        /* Image Viewer */
+        .image-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 4000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .image-viewer.show {
+            display: flex;
+        }
+
+        .image-viewer-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-viewer-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .image-viewer-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .image-viewer-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .image-viewer-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .image-viewer-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .image-viewer-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .zoom-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* Audio Recording */
+        .recording-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .record-btn {
+            flex: 1;
+            padding: 10px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .record-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .record-btn.recording {
+            background: linear-gradient(135deg, #e53e3e 0%, #c62828 100%);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(229, 62, 62, 0); }
+        }
+
+        .recording-timer {
+            text-align: center;
+            color: #ff6b9d;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
+        }
     </style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
@@ -788,7 +964,7 @@
      <div class="chat-info">
       <h2 id="headerName">محمد</h2>
       <p id="headerStatus">آخر ظهور: الآن</p>
-     </div><button class="logout-btn" id="adminSelectBtn" onclick="toggleAdminSelection()" style="display: none;">✏️ تحديد</button> <button class="logout-btn" onclick="downloadApp()">📱</button> <button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="emergencyExit()" style="background: #e53e3e;">🚨</button> <button class="logout-btn" onclick="logout()">خروج</button>
+     </div><button class="logout-btn" id="musicPlayerBtn" onclick="openMusicPlayer()" style="display: none; background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);">🎵</button> <button class="logout-btn" id="adminSelectBtn" onclick="toggleAdminSelection()" style="display: none;">✏️ تحديد</button> <button class="logout-btn" onclick="downloadApp()">📱</button> <button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="emergencyExit()" style="background: #e53e3e;">🚨</button> <button class="logout-btn" onclick="logout()">خروج</button>
     </div>
     <div class="messages-container" id="messagesContainer">
      <div class="empty-state">
@@ -800,7 +976,13 @@
      <div class="attachment-preview" id="attachmentPreview"><button class="remove-preview" onclick="removeAttachment()">×</button>
       <div id="previewContent"></div>
      </div>
-     <div class="input-controls"><button class="attach-btn" onclick="document.getElementById('imageInput').click()"> 📷 </button> <button class="attach-btn" onclick="document.getElementById('cameraInput').click()"> 📸 </button> <button class="attach-btn" onclick="document.getElementById('fileInput').click()"> 📎 </button> <button class="attach-btn" onclick="document.getElementById('videoInput').click()"> 🎥 </button>
+     <div class="input-controls"><button class="attach-btn" onclick="document.getElementById('imageInput').click()"> 📷 </button> <button class="attach-btn" onclick="document.getElementById('cameraInput').click()"> 📸 </button> <button class="attach-btn" onclick="document.getElementById('fileInput').click()"> 📎 </button> <button class="attach-btn" onclick="document.getElementById('videoInput').click()"> 🎥 </button> <button class="attach-btn" onclick="startAudioRecording()" id="audioRecordBtn"> 🎤 </button> <button class="attach-btn" onclick="startVideoRecording()" id="videoRecordBtn"> 📹 </button>
+     </div>
+     <div id="recordingContainer" style="display: none;">
+       <div class="recording-timer" id="recordingTimer">0:00</div>
+       <div class="recording-controls">
+         <button class="record-btn recording" onclick="stopRecording()">⏹️ إيقاف التسجيل</button>
+       </div>
      </div>
      <form class="message-form" id="messageForm"><textarea class="message-input" id="messageInput" placeholder="اكتب رسالة حب... (Shift+Enter للسطر الجديد)" required rows="1" style="resize: none; overflow-y: auto; max-height: 150px; line-height: 1.5;"></textarea> <button type="submit" class="send-btn" id="sendBtn"> 💕 </button>
      </form><input type="file" id="imageInput" accept="image/*" onchange="handleFileSelect(event, 'image')"> <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileSelect(event, 'camera')"> <input type="file" id="fileInput" onchange="handleFileSelect(event, 'file')"> <input type="file" id="videoInput" accept="video/*" onchange="handleFileSelect(event, 'video')">
@@ -812,14 +994,27 @@
     <div class="modal-header">
      <h2>⚙️ الإعدادات</h2><button class="close-modal" onclick="closeProfileModal()">×</button>
     </div>
-    <div class="profile-edit"><label>الاسم:</label> <input type="text" id="profileName" placeholder="الاسم"> <label>الحالة:</label> <input type="text" id="profileStatus" placeholder="الحالة"> <label>الرمز التعبيري:</label> <input type="text" id="profileEmoji" placeholder="👨 أو 👩" maxlength="2"> <label>صورة البروفايل:</label>
+    <div class="profile-edit"><label>الاسم:</label> <input type="text" id="profileName" placeholder="الاسم"> <label>الحالة:</label> <input type="text" id="profileStatus" placeholder="الحالة"> <label></label> <input type="text" id="profileEmoji" placeholder="👨 أو 👩" maxlength="2"> <label>صورة البروفايل:</label>
      <div style="display: flex; gap: 10px; margin-bottom: 10px;"><input type="text" id="profileImageUrl" placeholder="رابط الصورة (اختياري)" style="flex: 1;"> <button type="button" class="attach-btn" onclick="document.getElementById('profileImageInput').click()" style="padding: 10px 15px;"> 📷 رفع </button>
      </div><input type="file" id="profileImageInput" accept="image/*" onchange="handleProfileImageUpload(event)" style="display: none;">
-     <div id="profileImagePreview" style="display: none; margin-top: 10px;"><img id="profileImagePreviewImg" src="" alt="معاينة" style="max-width: 100px; max-height: 100px; border-radius: 50%; border: 3px solid #ff6b9d;">
-     </div><button class="save-btn" onclick="saveProfile()"> حفظ التغييرات 💾 </button> <button class="save-btn" id="notificationBtn" onclick="enableNotifications()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 🔔 تفعيل الإشعارات </button>
+     <div id="profileImagePreview" style="display: none; margin-top: 10px;"><img id="profileImagePreviewImg" src="" alt="معاينة" style="max-width: 100px; max-height: 100px; border-radius: 50%; border: 3px solid #ff6b9d; cursor: pointer;" onclick="document.getElementById('profileImagePreviewImg').src && openImageViewer(document.getElementById('profileImagePreviewImg').src);">
+     </div><button class="save-btn" id="editProfileImageBtn" onclick="editProfileImage()" style="display: none; background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); margin-top: 10px;"> 🎨 تحرير الصورة </button><button class="save-btn" onclick="saveProfile()"> حفظ التغييرات 💾 </button> <button class="save-btn" id="notificationBtn" onclick="enableNotifications()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 🔔 تفعيل الإشعارات </button>
      <div id="adminControls" style="display: none;">
       <hr style="margin: 20px 0;">
-      <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 لوحة التحكم الكاملة</h3><button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%);"> 👩 تعديل بروفيل مريم </button> <button class="save-btn" onclick="changeMariamPassword()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 10px;"> 🔐 تغيير كلمة سر مريم </button> <button class="save-btn" onclick="changeAdminPassword()" style="background: linear-gradient(135deg, #355c7d 0%, #2c3e50 100%); margin-top: 10px;"> 🔑 تغيير كلمة سر المسؤول </button> <button class="save-btn" onclick="changePlaylistUrl()" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); margin-top: 10px;"> 🎵 تغيير رابط قائمة الأغاني </button> <button class="save-btn" onclick="exportAllData()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 💾 تصدير جميع البيانات </button> <button class="save-btn" onclick="clearAllMessages()" style="background: #e53e3e; margin-top: 10px;"> 🗑️ حذف جميع الرسائل </button> <button class="save-btn" onclick="scanNetwork()" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); margin-top: 10px;"> 🔍 فحص الشبكة (IP &amp; MAC) </button> <button class="save-btn" onclick="resetAllData()" style="background: #d32f2f; margin-top: 10px;"> ⚠️ إعادة تعيين كل شيء </button>
+      <h3 style="color: #ff6b9d; margin-bottom: 15px;">🔧 لوحة التحكم الكاملة</h3>
+      <div style="background: rgba(255, 107, 157, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ff6b9d;">
+        <p style="font-size: 12px; color: #ff6b9d; margin: 0;">⚡ أنت: <strong>محمد (المسؤول)</strong></p>
+      </div>
+      <button class="save-btn" onclick="showChatStatistics()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);"> 📊 إحصائيات الدردشة </button>
+      <button class="save-btn" onclick="editMariamProfile()" style="background: linear-gradient(135deg, #ffa8c5 0%, #ff6b9d 100%); margin-top: 10px;"> 👩 تعديل بروفيل مريم </button> 
+      <button class="save-btn" onclick="changeMariamPassword()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 10px;"> 🔐 تغيير كلمة سر مريم </button> 
+      <button class="save-btn" onclick="changeAdminPassword()" style="background: linear-gradient(135deg, #355c7d 0%, #2c3e50 100%); margin-top: 10px;"> 🔑 تغيير كلمة سر المسؤول </button> 
+      <button class="save-btn" onclick="changePlaylistUrl()" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); margin-top: 10px;"> 🎵 تغيير رابط قائمة الأغاني </button>
+      <button class="save-btn" onclick="backupAllData()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); margin-top: 10px;"> 💾 عمل نسخة احتياطية </button>
+      <button class="save-btn" onclick="exportAllData()" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); margin-top: 10px;"> 📥 تصدير جميع البيانات </button>
+      <button class="save-btn" onclick="clearAllMessages()" style="background: #ff9800; margin-top: 10px;"> 🗑️ حذف جميع الرسائل </button> 
+      <button class="save-btn" onclick="blockMariamAccess()" style="background: #e53e3e; margin-top: 10px;"> 🔒 حظر دخول مريم (مؤقتاً) </button>
+      <button class="save-btn" onclick="resetAllData()" style="background: #d32f2f; margin-top: 10px;"> ⚠️ إعادة تعيين كل شيء </button>
      </div>
     </div>
    </div>
@@ -828,15 +1023,14 @@
   <div class="music-overlay" id="musicOverlay" onclick="closeMusicPlayer()"></div>
   <div class="music-sidebar" id="musicSidebar">
    <div class="music-header">
-    <h2>🎵 قائمة الأغاني</h2><button class="close-music" onclick="closeMusicPlayer()">×</button>
+    <h2>🎵 قائمة الأغاني</h2><button class="close-music" onclick="closeMusicPlayer()">✕</button>
    </div>
    <div class="music-iframe-container"><iframe id="musicIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe>
    </div>
    <div class="music-controls">
-    <div class="now-playing" id="nowPlaying" style="display: none;">
-     <h3>🎵 الآن يتم التشغيل</h3>
-     <p id="currentSongTitle">لا توجد أغنية</p>
-    </div>
+    <button class="music-control-btn" onclick="changePlaylistUrl()" title="تغيير قائمة الأغاني">🔄 غيّر</button>
+    <button class="music-control-btn" onclick="toggleFullscreen()" title="ملء الشاشة">📺 ملء</button>
+    <button class="music-control-btn" onclick="closeMusicPlayer()" title="إغلاق">🔙 رجوع</button>
    </div>
   </div><!-- Music Notification -->
   <div class="music-notification" id="musicNotification">
@@ -848,6 +1042,20 @@
    </div><button onclick="cancelSelection()">إلغاء</button>
   </div><!-- Admin Controls -->
   <div class="admin-controls" id="adminControls"><button class="admin-control-btn" onclick="editSelectedMessages()"> ✏️ تعديل الرسائل المحددة </button> <button class="admin-control-btn delete" onclick="deleteSelectedMessages()"> 🗑️ حذف الرسائل المحددة </button> <button class="admin-control-btn cancel" onclick="cancelSelection()"> ❌ إلغاء </button>
+  </div><!-- Image Viewer -->
+  <div class="image-viewer" id="imageViewer">
+    <button class="image-viewer-close" onclick="closeImageViewer()">✕</button>
+    <div class="zoom-info"><span id="zoomLevel">100%</span> | 🔍 استخدم العجلة للتكبير</div>
+    <div class="image-viewer-container">
+      <img id="viewerImage" class="image-viewer-image" alt="عرض الصورة">
+    </div>
+    <div class="image-viewer-controls">
+      <button class="image-viewer-btn" onclick="zoomImage(0.8)">🔍- تصغير</button>
+      <button class="image-viewer-btn" onclick="resetZoom()">🔄 إعادة تعيين</button>
+      <button class="image-viewer-btn" onclick="zoomImage(1.2)">🔍+ تكبير</button>
+      <button class="image-viewer-btn" id="editImageBtn" onclick="editImage()" style="display: none;">🎨 تحرير</button>
+      <button class="image-viewer-btn" onclick="downloadImage()">💾 حفظ الصورة</button>
+    </div>
   </div>
   <script>
         // JSONBin Configuration
@@ -900,7 +1108,7 @@
                 }
             },
             musicPlayer: {
-                playlistUrl: 'https://www.youtube.com/watch?v=YQ7SxFTZJW4&list=RDMMYQ7SxFTZJW4&index=1',
+                playlistUrl: 'https://www.youtube.com/watch?v=O9-9P-Xa2iA&list=RDO9-9P-Xa2iA&start_radio=1',
                 currentSong: null,
                 isPlaying: false
             },
@@ -1139,6 +1347,13 @@
             allData.profiles[currentUser].lastSeen = new Date().toISOString();
             saveData();
 
+            // Show welcome message
+            if (currentUser === 'mohamed') {
+                showToast('👑 أهلاً محمد (أنت المسؤول)');
+            } else {
+                showToast('👋 أهلاً مريم');
+            }
+
             showChatScreen();
         }
 
@@ -1166,9 +1381,12 @@
             updateHeader();
             renderMessages();
             
-            // Show admin select button for Mohamed
+            // Show buttons for Mohamed
             if (currentUser === 'mohamed') {
                 document.getElementById('adminSelectBtn').style.display = 'block';
+                document.getElementById('musicPlayerBtn').style.display = 'block';
+            } else {
+                document.getElementById('musicPlayerBtn').style.display = 'none';
             }
             
             setInterval(loadData, 3000);
@@ -1183,7 +1401,16 @@
             
             const imageSource = profile.imageData || profile.imageUrl;
             if (imageSource) {
-                headerPic.innerHTML = `<img src="${imageSource}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.textContent='${profile.emoji}';">`;
+                headerPic.innerHTML = `<img id="headerImg" src="${imageSource}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; cursor: pointer;" data-image="${imageSource}" onerror="this.style.display='none'; this.parentElement.textContent='${profile.emoji}';">`;
+                // Add click handler after HTML is updated
+                setTimeout(() => {
+                    const headerImg = document.getElementById('headerImg');
+                    if (headerImg) {
+                        headerImg.addEventListener('click', function() {
+                            openImageViewer(this.getAttribute('data-image'));
+                        });
+                    }
+                }, 0);
             } else {
                 headerPic.textContent = profile.emoji;
             }
@@ -1246,9 +1473,20 @@
             const content = document.getElementById('previewContent');
 
             if (currentAttachment.type === 'image' || currentAttachment.type === 'camera') {
-                content.innerHTML = `<img src="${currentAttachment.data}" class="preview-image" alt="Preview">`;
+                content.innerHTML = `<img id="previewImg" src="${currentAttachment.data}" class="preview-image" alt="Preview" style="cursor: pointer;" data-image="${currentAttachment.data}">`;
+                // Add click handler
+                setTimeout(() => {
+                    const previewImg = document.getElementById('previewImg');
+                    if (previewImg) {
+                        previewImg.addEventListener('click', function() {
+                            openImageViewer(this.getAttribute('data-image'));
+                        });
+                    }
+                }, 0);
+            } else if (currentAttachment.type === 'audio') {
+                content.innerHTML = `<div class="preview-file">🎤 تسجيل صوتي<br><small>${currentAttachment.name}</small></div>`;
             } else if (currentAttachment.type === 'video') {
-                content.innerHTML = `<div class="preview-file">🎥 ${currentAttachment.name}</div>`;
+                content.innerHTML = `<div class="preview-file">📹 تسجيل فيديو<br><small>${currentAttachment.name}</small></div>`;
             } else {
                 content.innerHTML = `<div class="preview-file">📎 ${currentAttachment.name}</div>`;
             }
@@ -1295,7 +1533,7 @@
 
             allData.messages.push(newMessage);
 
-            await saveData();
+            const saved = await saveData();
 
             messageInput.value = '';
             removeAttachment();
@@ -1303,7 +1541,21 @@
 
             sendBtn.disabled = false;
 
-            showToast('تم الإرسال 💕');
+            // Show different message based on attachment type
+            if (currentAttachment) {
+                const type = currentAttachment.type;
+                if (type === 'audio') {
+                    showToast('✅ تم إرسال التسجيل الصوتي وحفظه');
+                } else if (type === 'video') {
+                    showToast('✅ تم إرسال التسجيل والفيديو وحفظهم');
+                } else if (type === 'image' || type === 'camera') {
+                    showToast('✅ تم إرسال الصورة');
+                } else {
+                    showToast('✅ تم إرسال الملف');
+                }
+            } else {
+                showToast('تم الإرسال 💕');
+            }
         });
 
         // Toggle Admin Selection Mode
@@ -1444,11 +1696,24 @@
                 let attachmentHTML = '';
                 if (msg.attachment) {
                     if (msg.attachment.type === 'image' || msg.attachment.type === 'camera') {
-                        attachmentHTML = `<img src="${msg.attachment.data}" class="message-image" onclick="event.stopPropagation(); downloadAttachment('${msg.attachment.data}', '${msg.attachment.name}')" alt="صورة">`;
+                        const escapedData = msg.attachment.data.replace(/'/g, "\\'");
+                        attachmentHTML = `<img src="${msg.attachment.data}" class="message-image clickable-image" data-image="${msg.attachment.data}" alt="صورة" style="cursor: pointer;" onclick="openImageViewer(this.getAttribute('data-image'))">`;
+                    } else if (msg.attachment.type === 'audio') {
+                        attachmentHTML = `
+                            <div class="message-file" onclick="event.stopPropagation();">
+                                🎤 تسجيل صوتي
+                                <audio controls style="width: 100%; margin-top: 10px;">
+                                    <source src="${msg.attachment.data}" type="${msg.attachment.mimeType}">
+                                </audio>
+                            </div>
+                        `;
                     } else if (msg.attachment.type === 'video') {
                         attachmentHTML = `
-                            <div class="message-file" onclick="event.stopPropagation(); downloadAttachment('${msg.attachment.data}', '${msg.attachment.name}')">
-                                🎥 ${msg.attachment.name}
+                            <div class="message-file" onclick="event.stopPropagation();">
+                                📹 تسجيل فيديو
+                                <video controls style="width: 100%; margin-top: 10px; border-radius: 10px;">
+                                    <source src="${msg.attachment.data}" type="${msg.attachment.mimeType}">
+                                </video>
                             </div>
                         `;
                     } else {
@@ -1594,6 +1859,14 @@
                 document.getElementById('profileImagePreview').style.display = 'none';
             }
 
+            // Show edit button only for Mohamed
+            const editBtn = document.getElementById('editProfileImageBtn');
+            if (currentUser === 'mohamed' && imageSource) {
+                editBtn.style.display = 'block';
+            } else {
+                editBtn.style.display = 'none';
+            }
+
             if (currentUser === 'mohamed') {
                 document.getElementById('adminControls').style.display = 'block';
             } else {
@@ -1603,6 +1876,32 @@
             updateNotificationButton();
 
             document.getElementById('profileModal').classList.add('show');
+        }
+
+        // Edit Profile Image
+        function editProfileImage() {
+            if (currentUser !== 'mohamed') {
+                showToast('❌ فقط محمد يمكنه تحرير الصور');
+                return;
+            }
+
+            const imageSource = allData.profiles[currentUser].imageData || allData.profiles[currentUser].imageUrl;
+            if (!imageSource) {
+                showToast('لا توجد صورة لتحرير');
+                return;
+            }
+
+            // Open image viewer with edit enabled
+            currentImageSource = imageSource;
+            currentZoom = 1;
+            document.getElementById('viewerImage').src = imageSource;
+            document.getElementById('zoomLevel').textContent = '100%';
+            document.getElementById('editImageBtn').style.display = 'block';
+            document.getElementById('imageViewer').classList.add('show');
+            
+            // Hide download button in this case
+            const controls = document.querySelector('.image-viewer-controls');
+            controls.style.display = 'flex';
         }
 
         // Close Profile Modal
@@ -1838,7 +2137,7 @@
         // Open Music Player (Mohamed Only)
         function openMusicPlayer() {
             if (currentUser !== 'mohamed') {
-                showToast('هذه الميزة متاحة لمحمد فقط 🎵');
+                showToast('❌ هذه الميزة متاحة لمحمد فقط 🎵');
                 return;
             }
 
@@ -1849,6 +2148,11 @@
             if (playlistUrl.includes('youtube.com/watch')) {
                 embedUrl = playlistUrl.replace('watch?v=', 'embed/');
                 embedUrl = embedUrl.replace('&list=', '?list=');
+            } else if (playlistUrl.includes('youtube.com/playlist')) {
+                const listParam = playlistUrl.match(/list=([^&]+)/)?.[1];
+                if (listParam) {
+                    embedUrl = `https://www.youtube.com/embed/videoseries?list=${listParam}`;
+                }
             }
 
             document.getElementById('musicIframe').src = embedUrl;
@@ -1858,10 +2162,357 @@
             showToast('🎵 قائمة الأغاني مفتوحة!');
         }
 
+        // Image Viewer Variables
+        let currentZoom = 1;
+        let currentImageSource = '';
+        let isRecording = false;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStartTime = null;
+        let recordingInterval = null;
+        let recordingType = 'audio'; // 'audio' or 'video'
+
+        // Open Image Viewer
+        function openImageViewer(imageSrc) {
+            if (!imageSrc) {
+                showToast('❌ خطأ في تحميل الصورة');
+                return;
+            }
+            
+            currentImageSource = imageSrc;
+            currentZoom = 1;
+            const viewerImage = document.getElementById('viewerImage');
+            if (viewerImage) {
+                viewerImage.src = imageSrc;
+                viewerImage.style.transform = 'scale(1)';
+            }
+            document.getElementById('zoomLevel').textContent = '100%';
+            document.getElementById('imageViewer').classList.add('show');
+            
+            // Show edit button only for Mohamed
+            const editBtn = document.getElementById('editImageBtn');
+            if (currentUser === 'mohamed') {
+                editBtn.style.display = 'block';
+            } else {
+                editBtn.style.display = 'none';
+            }
+        }
+
+        // Close Image Viewer
+        function closeImageViewer() {
+            document.getElementById('imageViewer').classList.remove('show');
+            currentZoom = 1;
+        }
+
+        // Zoom Image
+        function zoomImage(factor) {
+            currentZoom *= factor;
+            currentZoom = Math.max(0.5, Math.min(currentZoom, 3));
+            const img = document.getElementById('viewerImage');
+            img.style.transform = `scale(${currentZoom})`;
+            document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+        }
+
+        // Reset Zoom
+        function resetZoom() {
+            currentZoom = 1;
+            const img = document.getElementById('viewerImage');
+            img.style.transform = 'scale(1)';
+            document.getElementById('zoomLevel').textContent = '100%';
+        }
+
+        // Edit Image (Mohamed Only)
+        function editImage() {
+            if (currentUser !== 'mohamed') {
+                showToast('❌ فقط محمد يمكنه تحرير الصور');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                
+                // Show edit menu
+                const editChoice = prompt('اختر عملية التحرير:\\n1 = تغيير الألوان\\n2 = إضافة فلتر\\n3 = تغيير السطوع');
+                
+                switch(editChoice) {
+                    case '1':
+                        // Color adjustment
+                        const brightness = prompt('السطوع (-100 إلى 100):', '0');
+                        const contrast = prompt('التباين (-100 إلى 100):', '0');
+                        applyColorFilter(canvas, parseInt(brightness), parseInt(contrast));
+                        break;
+                    case '2':
+                        // Apply filter
+                        const filterType = prompt('نوع الفلتر:\\nsepia = رجعي\\ngrayscale = أبيض وأسود\\ninvert = معكوس');
+                        applyImageFilter(canvas, filterType);
+                        break;
+                    case '3':
+                        // Brightness
+                        const bright = prompt('مستوى السطوع (0-200%):', '100');
+                        ctx.filter = `brightness(${bright}%)`;
+                        ctx.drawImage(img, 0, 0);
+                        break;
+                }
+                
+                // Update image
+                document.getElementById('viewerImage').src = canvas.toDataURL();
+                showToast('✅ تم تطبيق التحرير');
+            };
+            
+            img.src = currentImageSource;
+        }
+
+        // Apply Color Filter
+        function applyColorFilter(canvas, brightness, contrast) {
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, Math.max(0, data[i] + brightness));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + brightness));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + brightness));
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Apply Image Filter
+        function applyImageFilter(canvas, filterType) {
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                
+                if (filterType === 'sepia') {
+                    data[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189));
+                    data[i + 1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168));
+                    data[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131));
+                } else if (filterType === 'grayscale') {
+                    const gray = (r + g + b) / 3;
+                    data[i] = data[i + 1] = data[i + 2] = gray;
+                } else if (filterType === 'invert') {
+                    data[i] = 255 - r;
+                    data[i + 1] = 255 - g;
+                    data[i + 2] = 255 - b;
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Download Image
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = document.getElementById('viewerImage').src;
+            link.download = `صورة-${new Date().getTime()}.png`;
+            link.click();
+            showToast('📥 تم تحميل الصورة');
+        }
+
+        // Add wheel event for zoom
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageViewer = document.getElementById('imageViewer');
+            if (imageViewer) {
+                imageViewer.addEventListener('wheel', function(e) {
+                    if (imageViewer.classList.contains('show')) {
+                        e.preventDefault();
+                        if (e.deltaY < 0) {
+                            zoomImage(1.1); // تكبير
+                        } else {
+                            zoomImage(0.9); // تصغير
+                        }
+                    }
+                });
+            }
+        });
+
+        // Audio Recording
+        async function startAudioRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recordingType = 'audio';
+                startRecording(stream);
+            } catch (error) {
+                showToast('❌ لم يتم منح إذن الميكروفون');
+                console.error(error);
+            }
+        }
+
+        // Video Recording
+        async function startVideoRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' }, 
+                    audio: true 
+                });
+                recordingType = 'video';
+                startRecording(stream);
+            } catch (error) {
+                showToast('❌ لم يتم منح إذن الكاميرا');
+                console.error(error);
+            }
+        }
+
+        // Start Recording
+        function startRecording(stream) {
+            recordedChunks = [];
+            isRecording = true;
+            recordingStartTime = Date.now();
+            
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: recordingType === 'audio' ? 'audio/webm' : 'video/webm' });
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                    currentAttachment = {
+                        type: recordingType,
+                        data: reader.result,
+                        name: `${recordingType}-${new Date().getTime()}.webm`,
+                        size: blob.size,
+                        mimeType: blob.type
+                    };
+                    
+                    showAttachmentPreview();
+                    showToast(`✅ تم تسجيل ${recordingType === 'audio' ? 'الصوت' : 'الفيديو'}`);
+                };
+            };
+            
+            mediaRecorder.start();
+            
+            // Hide input controls and show recording controls
+            document.querySelector('.input-controls').style.display = 'none';
+            document.getElementById('recordingContainer').style.display = 'block';
+            document.getElementById('messageForm').style.display = 'none';
+            
+            // Update timer
+            recordingInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('recordingTimer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 100);
+            
+            showToast(`🎤 جاري التسجيل...`);
+        }
+
+        // Stop Recording
+        function stopRecording() {
+            if (!isRecording) return;
+            
+            isRecording = false;
+            mediaRecorder.stop();
+            
+            // Stop all streams
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            
+            // Clear interval and show input controls
+            clearInterval(recordingInterval);
+            document.querySelector('.input-controls').style.display = 'flex';
+            document.getElementById('recordingContainer').style.display = 'none';
+            document.getElementById('messageForm').style.display = 'flex';
+        }
+
+        // Toggle Fullscreen
+        function toggleFullscreen() {
+            const iframe = document.getElementById('musicIframe');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.mozRequestFullScreen) {
+                iframe.mozRequestFullScreen();
+            } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+            }
+        }
+
         // Close Music Player
         function closeMusicPlayer() {
             document.getElementById('musicSidebar').classList.remove('show');
             document.getElementById('musicOverlay').classList.remove('show');
+        }
+
+        // Show Chat Statistics (Admin Only)
+        function showChatStatistics() {
+            if (currentUser !== 'mohamed') return;
+
+            const totalMessages = allData.messages.length;
+            const mohamedMessages = allData.messages.filter(m => m.sender === 'mohamed').length;
+            const mariamMessages = allData.messages.filter(m => m.sender === 'mariam').length;
+            
+            const stats = `
+📊 إحصائيات الدردشة:
+━━━━━━━━━━━━━━━━━━━━━━
+📈 إجمالي الرسائل: ${totalMessages}
+💬 رسائل محمد: ${mohamedMessages}
+💬 رسائل مريم: ${mariamMessages}
+⏰ تاريخ آخر رسالة: ${totalMessages > 0 ? new Date(allData.messages[totalMessages-1].timestamp).toLocaleString('ar-EG') : 'لا توجد رسائل'}
+`;
+
+            alert(stats);
+        }
+
+        // Backup All Data (Admin Only)
+        async function backupAllData() {
+            if (currentUser !== 'mohamed') return;
+
+            const backupData = JSON.stringify(allData, null, 2);
+            const backupBlob = new Blob([backupData], { type: 'application/json' });
+            const backupUrl = URL.createObjectURL(backupBlob);
+            const link = document.createElement('a');
+            link.href = backupUrl;
+            link.download = `chat-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(backupUrl);
+            
+            showToast('✅ تم عمل نسخة احتياطية بنجاح');
+        }
+
+        // Block Mariam Access (Admin Only)
+        async function blockMariamAccess() {
+            if (currentUser !== 'mohamed') return;
+
+            const isBlocked = allData.passwords?.mariam === 'BLOCKED_BY_ADMIN';
+            
+            if (isBlocked) {
+                const newPassword = prompt('حظر مريم نشط. أدخل كلمة السر الجديدة لفتح الحساب:');
+                if (newPassword === null) return;
+                
+                if (newPassword.trim() === '') {
+                    allData.passwords.mariam = '';
+                    showToast('✅ تم إزالة الحظر عن مريم');
+                } else {
+                    allData.passwords.mariam = newPassword.trim();
+                    showToast('✅ تم تعيين كلمة سر جديدة لمريم');
+                }
+            } else {
+                const confirmBlock = confirm('⚠️ هل تريد حظر دخول مريم حالياً؟\nستحتاج لتعيين كلمة سر جديدة لفتح الحساب');
+                if (!confirmBlock) return;
+                
+                allData.passwords.mariam = 'BLOCKED_BY_ADMIN';
+                showToast('⛔ تم حظر دخول مريم');
+            }
+            
+            await saveData();
         }
 
         // Show Toast
