@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="shortcut icon" href="logo_mohamed_and_mariam.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>💕 محمد ومريم - شات الحب 💕</title>
+  <title>💕 Mohamed & Mariam - Love chat 💕</title>
   <style>
         * {
             margin: 0;
@@ -946,12 +946,12 @@
     </div>
     <div class="user-selection">
      <div class="user-card" onclick="selectUser('mohamed')">
-      <h2>محمد</h2>
-      <p>حساب المسؤول - يتطلب كلمة سر</p>
+      <h2>Mohamed</h2>
+      <p>She Love 💝</p>
      </div>
      <div class="user-card mariam" onclick="selectUser('mariam')">
-      <h2>مريم</h2>
-      <p>دخول مباشر بدون كلمة سر</p>
+      <h2>Mariam</h2>
+      <p>My Love 💝</p>
      </div>
     </div><input type="password" id="passwordInput" class="password-input" placeholder="أدخل كلمة السر"> <button class="login-btn" id="loginBtn" onclick="login()"> دخول 💖 </button> <button class="login-btn" onclick="downloadApp()" style="background: linear-gradient(135deg, #6c5b7b 0%, #355c7d 100%); margin-top: 15px;"> 📱 تنزيل التطبيق للتواصل الأفضل </button>
     <p class="error-message" id="errorMessage">كلمة السر غير صحيحة!</p>
@@ -1040,8 +1040,7 @@
   <div class="selection-mode-header" id="selectionModeHeader">
    <div><span id="selectedCount">0</span> محدد
    </div><button onclick="cancelSelection()">إلغاء</button>
-  </div><!-- Admin Controls -->
-  <div class="admin-controls" id="adminControls"><button class="admin-control-btn" onclick="editSelectedMessages()"> ✏️ تعديل الرسائل المحددة </button> <button class="admin-control-btn delete" onclick="deleteSelectedMessages()"> 🗑️ حذف الرسائل المحددة </button> <button class="admin-control-btn cancel" onclick="cancelSelection()"> ❌ إلغاء </button>
+  </div>
   </div><!-- Image Viewer -->
   <div class="image-viewer" id="imageViewer">
     <button class="image-viewer-close" onclick="closeImageViewer()">✕</button>
@@ -1078,7 +1077,7 @@
             profiles: {
                 mohamed: {
                     name: 'محمد',
-                    emoji: '',
+                    emoji: '👨',
                     status: 'متصل الآن',
                     lastSeen: new Date().toISOString(),
                     imageUrl: 'https://i.ibb.co/XrXwgWRy/Mohamed2.jpg',
@@ -1086,7 +1085,7 @@
                 },
                 mariam: {
                     name: 'مريم',
-                    emoji: '',
+                    emoji: '👩',
                     status: 'متصلة الآن',
                     lastSeen: new Date().toISOString(),
                     imageUrl: 'https://i.ibb.co/tP1yy4H0/image.png',
@@ -1131,7 +1130,7 @@
                 try {
                     const userData = JSON.parse(savedUser);
                     if (userData.user === 'mariam') {
-                        console.log('✅ تسجيل دخول تلقائي لمريم');
+                        console.log('Automatic Login for mariam ✔');
                         currentUser = 'mariam';
                         showChatScreen();
                     }
@@ -1971,6 +1970,7 @@
             const emoji = prompt('رمز مريم:', profile.emoji);
             const status = prompt('حالة مريم:', profile.status);
             const imageUrl = prompt('رابط صورة مريم (اختياري):', profile.imageUrl || '');
+           
 
             if (name) allData.profiles.mariam.name = name;
             if (emoji) allData.profiles.mariam.emoji = emoji;
@@ -3018,4 +3018,5 @@
         initApp();
     </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99f8bf96870ca470',t:'MTc2MzMxNDU2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
 </html>
