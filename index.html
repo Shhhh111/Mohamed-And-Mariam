@@ -938,11 +938,10 @@
   <div class="container"><!-- Login Screen -->
    <div class="login-screen" id="loginScreen">
     <div class="login-header">
-     <h1>💕 شات الحب 💕</h1>
+     <h1>💕 Loves Chat 💕</h1>
      <br>
      <img src="logo_mohamed_and_mariam.ico" alt="logo_mohamed_and_mariam" height="150" width="150">
      <br>
-     <p>اختر حسابك للدخول</p>
     </div>
     <div class="user-selection">
      <div class="user-card" onclick="selectUser('mohamed')">
@@ -964,7 +963,12 @@
      <div class="chat-info">
       <h2 id="headerName">محمد</h2>
       <p id="headerStatus">آخر ظهور: الآن</p>
-     </div><button class="logout-btn" id="musicPlayerBtn" onclick="openMusicPlayer()" style="display: none; background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);">🎵</button> <button class="logout-btn" id="adminSelectBtn" onclick="toggleAdminSelection()" style="display: none;">✏️ تحديد</button> <button class="logout-btn" onclick="downloadApp()">📱</button> <button class="logout-btn" onclick="showProfileModal()">⚙️</button> <button class="logout-btn" onclick="emergencyExit()" style="background: #e53e3e;">🚨</button> <button class="logout-btn" onclick="logout()">خروج</button>
+     </div><button class="logout-btn" id="musicPlayerBtn" onclick="openMusicPlayer()" style="display: none; background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);">🎵</button> 
+     <button class="logout-btn" id="adminSelectBtn" onclick="toggleAdminSelection()" style="display: none;">✏️ تحديد</button> 
+     <button class="logout-btn" onclick="downloadApp()">📱</button> 
+     <button class="logout-btn" onclick="showProfileModal()">⚙️</button> 
+     <button class="logout-btn" onclick="emergencyExit()" style="background: #e53e3e;">🚨 خروج فوري</button> 
+     <button class="logout-btn" onclick="logout()">خروج</button>
     </div>
     <div class="messages-container" id="messagesContainer">
      <div class="empty-state">
@@ -984,7 +988,7 @@
          <button class="record-btn recording" onclick="stopRecording()">⏹️ إيقاف التسجيل</button>
        </div>
      </div>
-     <form class="message-form" id="messageForm"><textarea class="message-input" id="messageInput" placeholder="اكتب رسالة حب... (Shift+Enter للسطر الجديد)" required rows="1" style="resize: none; overflow-y: auto; max-height: 150px; line-height: 1.5;"></textarea> <button type="submit" class="send-btn" id="sendBtn"> 💕 </button>
+     <form class="message-form" id="messageForm"><textarea class="message-input" id="messageInput" placeholder="اكتب\ي رسالة" required rows="1" style="resize: none; overflow-y: auto; max-height: 150px; line-height: 1.5;"></textarea> <button type="submit" class="send-btn" id="sendBtn"> 💕 </button>
      </form><input type="file" id="imageInput" accept="image/*" onchange="handleFileSelect(event, 'image')"> <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileSelect(event, 'camera')"> <input type="file" id="fileInput" onchange="handleFileSelect(event, 'file')"> <input type="file" id="videoInput" accept="video/*" onchange="handleFileSelect(event, 'video')">
     </div>
    </div>
@@ -1970,7 +1974,6 @@
             const emoji = prompt('رمز مريم:', profile.emoji);
             const status = prompt('حالة مريم:', profile.status);
             const imageUrl = prompt('رابط صورة مريم (اختياري):', profile.imageUrl || '');
-           
 
             if (name) allData.profiles.mariam.name = name;
             if (emoji) allData.profiles.mariam.emoji = emoji;
